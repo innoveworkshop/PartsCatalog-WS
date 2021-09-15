@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.innoveworkshop.partscatalog</groupId>
+  <artifactId>partscatalog</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+  <name>PartsCatalog</name>
+  <description>A simple web service to browse through your parts bins</description>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <release>11</release>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.2.3</version>
+        <configuration>
+          <warSourceDirectory>WebContent</warSourceDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <url>https://github.com/innoveworkshop/PartsCatalog-WS</url>
+  <organization>
+  	<name>Innove Workshop</name>
+  	<url>https://innoveworkshop.com/</url>
+  </organization>
+  <scm>
+  	<url>https://github.com/innoveworkshop/PartsCatalog-WS.git</url>
+  </scm>
+  <dependencies>
+  	<dependency>
+  		<groupId>mysql</groupId>
+  		<artifactId>mysql-connector-java</artifactId>
+  		<version>[8.0,9.0)</version>
+  	</dependency>
+  </dependencies>
+</project>
