@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
  * format given by a query parameter.
  */
 public class ServletResponseFormatter {
-	private HttpServletRequest request;
 	private HttpServletResponse response;
 	private ServletResponseFormat format = ServletResponseFormat.JSON;
 	
@@ -23,7 +22,6 @@ public class ServletResponseFormatter {
 	 */
 	public ServletResponseFormatter(HttpServletRequest request,
 			HttpServletResponse response, ServletResponseFormat format) {
-    	this.request = request;
     	this.response = response;
     	this.format = format;
     }
@@ -37,7 +35,6 @@ public class ServletResponseFormatter {
 	 */
 	public ServletResponseFormatter(HttpServletRequest request,
 			HttpServletResponse response, String strFormat) {
-    	this.request = request;
     	this.response = response;
 
     	setFormat(strFormat);
@@ -51,7 +48,6 @@ public class ServletResponseFormatter {
 	 * @param response Servlet response object.
 	 */
     public ServletResponseFormatter(HttpServletRequest request, HttpServletResponse response) {
-    	this.request = request;
     	this.response = response;
     	
     	setFormat(request.getParameter("format"));
@@ -115,11 +111,10 @@ public class ServletResponseFormatter {
 	 */
 	public void setFormat(String strFormat) {
 		// Ignore if the format string is null.
-		if (request.getParameter("format") == null)
+		if (strFormat == null)
 			return;
 		
-		// Normalize the string and start testing.
-		strFormat = strFormat.toLowerCase();
+		// Start testing.
 		if (strFormat.equalsIgnoreCase("json")) {
 			format = ServletResponseFormat.JSON;
 		} else if (strFormat.equalsIgnoreCase("xml")) {
