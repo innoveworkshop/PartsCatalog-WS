@@ -1,9 +1,13 @@
 package com.innoveworkshop.partscatalog.db.models;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 /**
@@ -20,6 +24,9 @@ public class Category {
 	
 	@Column(name = "name")
 	private String name;
+	
+	@ManyToMany(mappedBy = "parentCategory", fetch = FetchType.LAZY)
+	private Set<SubCategory> subCategories;
 	
 	/**
 	 * Component category empty constructor.
@@ -61,5 +68,33 @@ public class Category {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	/**
+	 * Gets the sub-categories that are a child of this category.
+	 * 
+	 * @return Child sub-categories.
+	 */
+	public Set<SubCategory> getSubCategories() {
+		return subCategories;
+	}
+	
+	/**
+	 * Sets the sub-categories that are a child of this category.
+	 * 
+	 * @param subCategories Child sub-categories.
+	 */
+	public void setSubCategories(Set<SubCategory> subCategories) {
+		this.subCategories = subCategories;
+	}
+	
+	/**
+	 * String representation of this object.
+	 * 
+	 * @return Category name.
+	 */
+	@Override
+	public String toString() {
+		return name;
 	}
 }

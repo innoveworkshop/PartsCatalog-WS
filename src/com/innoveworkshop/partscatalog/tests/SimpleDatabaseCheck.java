@@ -1,11 +1,16 @@
 package com.innoveworkshop.partscatalog.tests;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Session;
 
 import com.innoveworkshop.partscatalog.db.DatabaseConnection;
 import com.innoveworkshop.partscatalog.db.models.Category;
+import com.innoveworkshop.partscatalog.db.models.Component;
+import com.innoveworkshop.partscatalog.db.models.ComponentPackage;
+import com.innoveworkshop.partscatalog.db.models.Property;
+import com.innoveworkshop.partscatalog.db.models.SubCategory;
 
 /**
  * A simple command-line application to check the database and print some data.
@@ -19,7 +24,6 @@ public class SimpleDatabaseCheck {
 	 * @param args Command-line arguments passed to the program.
 	 */
 	public static void main(String[] args) {
-		
 		System.out.println("PartsCatalog - Simple Database Check");
 		System.out.println();
 		
@@ -30,10 +34,48 @@ public class SimpleDatabaseCheck {
 			Session session = db.openSession();
 			
 			// List categories.
+			System.out.println("==== Categories ====");
 			@SuppressWarnings("unchecked")
 			List<Category> categories = (List<Category>)session.createQuery("FROM Category").list();
 			for (Category category : categories) {
 				System.out.println(category.getName());
+				
+				// List sub-categories.
+				Set<SubCategory> subCategories = category.getSubCategories();
+				for (SubCategory subCategory : subCategories) {
+					System.out.println("    " + subCategory.getName());
+				}
+			}
+			System.out.println();
+			
+			// List categories.
+			System.out.println("==== Packages ====");
+			@SuppressWarnings("unchecked")
+			List<ComponentPackage> packages = (List<ComponentPackage>)session.createQuery("FROM ComponentPackage").list();
+			for (ComponentPackage compPackage : packages) {
+				System.out.println(compPackage.getName());
+			}
+			System.out.println();
+			
+			// Get a single component.
+			System.out.println("==== Component ====");
+			@SuppressWarnings("unchecked")
+			List<Component> components = (List<Component>)session.createQuery("FROM Component WHERE id = 1").list();
+			for (Component component : components) {
+				System.out.println("ID: " + component.getID());
+				System.out.println("Name: " + component.getName());
+				System.out.println("Quantity: " + component.getQuantity());
+				System.out.println("Description: " + component.getDescription());
+				System.out.println("Category: " + component.getCategory());
+				System.out.println("Sub-Category: " + component.getSubCategory());
+				System.out.println("Package: " + component.getPackage());
+				System.out.println("Properties:");
+				
+				Set<Property> properties = component.getProperties();
+				for (Property property : properties) {
+					System.out.println("    " + property);
+				}
+				
 			}
 			
 			// Clean up.
