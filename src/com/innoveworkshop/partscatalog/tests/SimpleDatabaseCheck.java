@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.hibernate.Session;
 
+import com.innoveworkshop.partscatalog.config.Configuration;
 import com.innoveworkshop.partscatalog.db.DatabaseConnection;
 import com.innoveworkshop.partscatalog.db.models.Category;
 import com.innoveworkshop.partscatalog.db.models.Component;
@@ -28,9 +29,8 @@ public class SimpleDatabaseCheck {
 		System.out.println();
 		
 		try {
-			DatabaseConnection db = new DatabaseConnection("com.innoveworkshop.partscatalog.db.models");
-
-			// Open a new session.
+			// Connect to the database and open a new session.
+			DatabaseConnection db = new DatabaseConnection(Configuration.DB_MODELS_PACKAGE);
 			Session session = db.openSession();
 			
 			// List categories.
