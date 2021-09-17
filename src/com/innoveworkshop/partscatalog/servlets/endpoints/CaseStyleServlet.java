@@ -14,7 +14,7 @@ import org.hibernate.Session;
 
 import com.innoveworkshop.partscatalog.config.Configuration;
 import com.innoveworkshop.partscatalog.db.DatabaseConnection;
-import com.innoveworkshop.partscatalog.db.models.ComponentPackage;
+import com.innoveworkshop.partscatalog.db.models.CaseStyle;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
 
@@ -24,7 +24,7 @@ import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 @WebServlet("/package")
-public class ComponentPackageServlet extends HttpServlet {
+public class CaseStyleServlet extends HttpServlet {
 	private static final long serialVersionUID = -3925669235622189733L;
 	private DatabaseConnection db;
 	private Session session;
@@ -32,7 +32,7 @@ public class ComponentPackageServlet extends HttpServlet {
 	/**
      * @see HttpServlet#HttpServlet()
      */
-    public ComponentPackageServlet() {
+    public CaseStyleServlet() {
         super();
         
 		// Connect to the database and open a new session.
@@ -47,14 +47,14 @@ public class ComponentPackageServlet extends HttpServlet {
 		Query query;
 		if (request.getParameter("id") == null) {
 			// List all packages.
-			query = session.createQuery("FROM ComponentPackage");
+			query = session.createQuery("FROM CaseStyle");
 		} else {
 			// Get a single package.
-			query = session.createQuery("FROM ComponentPackage WHERE id = :id");
+			query = session.createQuery("FROM CaseStyle WHERE id = :id");
 			query.setParameter("id", Integer.parseInt(request.getParameter("id")));
 		}
 		@SuppressWarnings("unchecked")
-		List<ComponentPackage> packages = (List<ComponentPackage>)query.getResultList();
+		List<CaseStyle> packages = (List<CaseStyle>)query.getResultList();
 		
 		// Setup the response formatter and respond to the request.
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);

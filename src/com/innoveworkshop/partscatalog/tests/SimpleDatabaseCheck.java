@@ -9,7 +9,7 @@ import com.innoveworkshop.partscatalog.config.Configuration;
 import com.innoveworkshop.partscatalog.db.DatabaseConnection;
 import com.innoveworkshop.partscatalog.db.models.Category;
 import com.innoveworkshop.partscatalog.db.models.Component;
-import com.innoveworkshop.partscatalog.db.models.ComponentPackage;
+import com.innoveworkshop.partscatalog.db.models.CaseStyle;
 import com.innoveworkshop.partscatalog.db.models.Property;
 import com.innoveworkshop.partscatalog.db.models.SubCategory;
 
@@ -51,8 +51,8 @@ public class SimpleDatabaseCheck {
 			// List categories.
 			System.out.println("==== Packages ====");
 			@SuppressWarnings("unchecked")
-			List<ComponentPackage> packages = (List<ComponentPackage>)session.createQuery("FROM ComponentPackage").list();
-			for (ComponentPackage compPackage : packages) {
+			List<CaseStyle> packages = (List<CaseStyle>)session.createQuery("FROM ComponentPackage").list();
+			for (CaseStyle compPackage : packages) {
 				System.out.println(compPackage.getName());
 			}
 			System.out.println();

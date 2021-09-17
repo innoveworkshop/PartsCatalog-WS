@@ -29,7 +29,7 @@ import com.innoveworkshop.partscatalog.servlets.utils.Formattable;
  */
 @Entity
 @Table(name = "comp_packages")
-public class ComponentPackage extends Formattable {
+public class CaseStyle extends Formattable {
 	@Id @GeneratedValue
 	@Column(name = "id")
 	private int id;
@@ -40,7 +40,7 @@ public class ComponentPackage extends Formattable {
 	/**
 	 * Component package empty constructor.
 	 */
-	public ComponentPackage() {
+	public CaseStyle() {
 	}
 	
 	/**

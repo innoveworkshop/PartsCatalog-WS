@@ -15,7 +15,6 @@ import org.hibernate.Session;
 import com.innoveworkshop.partscatalog.config.Configuration;
 import com.innoveworkshop.partscatalog.db.DatabaseConnection;
 import com.innoveworkshop.partscatalog.db.models.Category;
-import com.innoveworkshop.partscatalog.db.models.ComponentPackage;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
 

@@ -61,7 +61,7 @@ public class Component extends Formattable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "package_id", nullable = true)
-	private ComponentPackage caseStyle;
+	private CaseStyle caseStyle;
 	
 	@ManyToMany(mappedBy = "component", fetch = FetchType.LAZY)
 	private Set<Property> properties;
@@ -185,7 +185,7 @@ public class Component extends Formattable {
 	 * 
 	 * @return Component package.
 	 */
-	public ComponentPackage getCaseStyle() {
+	public CaseStyle getCaseStyle() {
 		return caseStyle;
 	}
 	
@@ -194,7 +194,7 @@ public class Component extends Formattable {
 	 * 
 	 * @param caseStyle Component package.
 	 */
-	public void setCaseStyle(ComponentPackage caseStyle) {
+	public void setCaseStyle(CaseStyle caseStyle) {
 		this.caseStyle = caseStyle;
 	}
 	
@@ -204,17 +204,17 @@ public class Component extends Formattable {
 	 * @return Component package.
 	 * @see    #getCaseStyle()
 	 */
-	public ComponentPackage getPackage() {
+	public CaseStyle getPackage() {
 		return getCaseStyle();
 	}
 	
 	/**
 	 * Sets the component package.
-	 * @see #setCaseStyle(ComponentPackage)
+	 * @see #setCaseStyle(CaseStyle)
 	 * 
 	 * @param caseStyle Component package.
 	 */
-	public void setPackage(ComponentPackage caseStyle) {
+	public void setPackage(CaseStyle caseStyle) {
 		setCaseStyle(caseStyle);
 	}
 	
