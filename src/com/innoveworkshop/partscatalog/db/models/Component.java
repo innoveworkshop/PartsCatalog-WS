@@ -257,7 +257,8 @@ public class Component extends Formattable {
 		json.put("description", description);
 		json.put("category", category.toJSON(false));
 		json.put("subcategory", subcategory.toJSON(false));
-		json.put("package", caseStyle.toJSON(false));
+		json.put("package", caseStyle != null ? caseStyle.toJSON(false) :
+			JSONObject.NULL);
 		
 		// Populate sub-categories in case we actually want it.
 		if (verbose)
