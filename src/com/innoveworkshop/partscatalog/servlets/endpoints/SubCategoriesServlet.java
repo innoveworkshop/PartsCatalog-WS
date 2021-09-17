@@ -14,17 +14,17 @@ import org.hibernate.Session;
 
 import com.innoveworkshop.partscatalog.config.Configuration;
 import com.innoveworkshop.partscatalog.db.DatabaseConnection;
-import com.innoveworkshop.partscatalog.db.models.Category;
+import com.innoveworkshop.partscatalog.db.models.SubCategory;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
 
 /**
- * Component categories servlet handler.
+ * Component sub-categories servlet handler.
  * 
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
-@WebServlet("/category")
-public class CategoriesServlet extends HttpServlet {
+@WebServlet("/subcategory")
+public class SubCategoriesServlet extends HttpServlet {
 	private static final long serialVersionUID = -3925669235622189733L;
 	private DatabaseConnection db;
 	private Session session;
@@ -32,7 +32,7 @@ public class CategoriesServlet extends HttpServlet {
 	/**
      * @see HttpServlet#HttpServlet()
      */
-    public CategoriesServlet() {
+    public SubCategoriesServlet() {
         super();
         
 		// Connect to the database and open a new session.
@@ -43,22 +43,30 @@ public class CategoriesServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// Check if we have the required parent category XOR ID parameter.
+		if (!((request.getParameter("parent") != null) ^ (request.getParameter("id") != null))) {
+			response.sendError(422, "Unprocessable Entity");
+			return;
+		}
+		
+		// List sub-categories.
 		Query query;
-		if (request.getParameter("id") == null) {
-			// List all categories.
-			query = session.createQuery("FROM Category");
+		if (request.getParameter("parent") != null) {
+			// Get sub-categories from a category.
+			query = session.createQuery("FROM SubCategory WHERE parentCategory.id = :parent");
+			query.setParameter("parent", Integer.parseInt(request.getParameter("parent")));
 		} else {
-			// Get a single category.
-			query = session.createQuery("FROM Category WHERE id = :id");
+			// Get a single sub-category.
+			query = session.createQuery("FROM SubCategory WHERE id = :id");
 			query.setParameter("id", Integer.parseInt(request.getParameter("id")));
 		}
-		List<Category> categories = (List<Category>)query.getResultList();
+		@SuppressWarnings("unchecked")
+		List<SubCategory> subCategories = (List<SubCategory>)query.getResultList();
 		
 		// Setup the response formatter and respond to the request.
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
-		formatter.respond(new FormattableCollection("categories", categories));
+		formatter.respond(new FormattableCollection("subcategories", subCategories));
 	}
 }

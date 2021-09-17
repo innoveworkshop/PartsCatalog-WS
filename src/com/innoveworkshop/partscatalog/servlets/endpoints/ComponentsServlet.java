@@ -15,16 +15,17 @@ import org.hibernate.Session;
 import com.innoveworkshop.partscatalog.config.Configuration;
 import com.innoveworkshop.partscatalog.db.DatabaseConnection;
 import com.innoveworkshop.partscatalog.db.models.Category;
+import com.innoveworkshop.partscatalog.db.models.ComponentPackage;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
 
 /**
- * Component categories servlet handler.
+ * Component servlet handler.
  * 
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
-@WebServlet("/category")
-public class CategoriesServlet extends HttpServlet {
+@WebServlet("/component")
+public class ComponentsServlet extends HttpServlet {
 	private static final long serialVersionUID = -3925669235622189733L;
 	private DatabaseConnection db;
 	private Session session;
@@ -32,7 +33,7 @@ public class CategoriesServlet extends HttpServlet {
 	/**
      * @see HttpServlet#HttpServlet()
      */
-    public CategoriesServlet() {
+    public ComponentsServlet() {
         super();
         
 		// Connect to the database and open a new session.
@@ -43,17 +44,17 @@ public class CategoriesServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Query query;
 		if (request.getParameter("id") == null) {
-			// List all categories.
-			query = session.createQuery("FROM Category");
+			// List all components.
+			query = session.createQuery("FROM Component");
 		} else {
-			// Get a single category.
-			query = session.createQuery("FROM Category WHERE id = :id");
+			// Get a single component.
+			query = session.createQuery("FROM Component WHERE id = :id");
 			query.setParameter("id", Integer.parseInt(request.getParameter("id")));
 		}
+		@SuppressWarnings("unchecked")
 		List<Category> categories = (List<Category>)query.getResultList();
 		
 		// Setup the response formatter and respond to the request.

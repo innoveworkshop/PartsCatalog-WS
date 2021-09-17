@@ -14,17 +14,17 @@ import org.hibernate.Session;
 
 import com.innoveworkshop.partscatalog.config.Configuration;
 import com.innoveworkshop.partscatalog.db.DatabaseConnection;
-import com.innoveworkshop.partscatalog.db.models.Category;
+import com.innoveworkshop.partscatalog.db.models.Property;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
 
 /**
- * Component categories servlet handler.
+ * Component properties list servlet handler.
  * 
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
-@WebServlet("/category")
-public class CategoriesServlet extends HttpServlet {
+@WebServlet("/property")
+public class PropertiesServlet extends HttpServlet {
 	private static final long serialVersionUID = -3925669235622189733L;
 	private DatabaseConnection db;
 	private Session session;
@@ -32,7 +32,7 @@ public class CategoriesServlet extends HttpServlet {
 	/**
      * @see HttpServlet#HttpServlet()
      */
-    public CategoriesServlet() {
+    public PropertiesServlet() {
         super();
         
 		// Connect to the database and open a new session.
@@ -43,22 +43,30 @@ public class CategoriesServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// Check if we have the required parent component XOR ID parameter.
+		if (!((request.getParameter("component") != null) ^ (request.getParameter("id") != null))) {
+			response.sendError(422, "Unprocessable Entity");
+			return;
+		}
+		
+		// List properties.
 		Query query;
-		if (request.getParameter("id") == null) {
-			// List all categories.
-			query = session.createQuery("FROM Category");
+		if (request.getParameter("component") != null) {
+			// Get properties from a component.
+			query = session.createQuery("FROM Property WHERE component.id = :component");
+			query.setParameter("component", Integer.parseInt(request.getParameter("component")));
 		} else {
-			// Get a single category.
-			query = session.createQuery("FROM Category WHERE id = :id");
+			// Get a single property.
+			query = session.createQuery("FROM Property WHERE id = :id");
 			query.setParameter("id", Integer.parseInt(request.getParameter("id")));
 		}
-		List<Category> categories = (List<Category>)query.getResultList();
+		@SuppressWarnings("unchecked")
+		List<Property> properties = (List<Property>)query.getResultList();
 		
 		// Setup the response formatter and respond to the request.
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
-		formatter.respond(new FormattableCollection("categories", categories));
+		formatter.respond(new FormattableCollection("properties", properties));
 	}
 }
