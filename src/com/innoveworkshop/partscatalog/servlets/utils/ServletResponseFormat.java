@@ -9,6 +9,5 @@ public enum ServletResponseFormat {
 	JSON,
 	XML,
 	CSV,
-	HTML,
 	TEXT
 }

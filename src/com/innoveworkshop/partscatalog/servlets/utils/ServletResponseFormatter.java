@@ -1,15 +1,24 @@
 package com.innoveworkshop.partscatalog.servlets.utils;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 /**
- * Base class to be inherited by other servlets that allows for a dynamic output
- * format given by a query parameter.
+ * Allows servlets to output serialized objects in a bunch of different formats
+ * automatically given a "format" query parameter.
+ * 
+ * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 public class ServletResponseFormatter {
+	private boolean verbose = false;
 	private HttpServletResponse response;
 	private ServletResponseFormat format = ServletResponseFormat.JSON;
 	
@@ -59,7 +68,7 @@ public class ServletResponseFormatter {
      * @param obj Object that will be serialized and formatted.
      * @throws IOException
      */
-    public void respond(Object obj) throws IOException {
+    public void respond(Formattable obj) throws IOException {
     	response.setContentType(getMimeType());
     	response.getWriter().print(getFormattedResponse(obj));
     }
@@ -72,7 +81,30 @@ public class ServletResponseFormatter {
      * @param  format Desired output format.
      * @return        Formatted output string.
      */
-    public String getFormattedResponse(Object obj, ServletResponseFormat format) {
+    public String getFormattedResponse(Formattable obj, ServletResponseFormat format) {
+    	switch (format) {
+    	case TEXT:
+    		return obj.toPlainText(verbose);
+    	case JSON:
+    		return obj.toJSON(verbose).toString();
+		case CSV:
+			return obj.toCSV(verbose);
+		case XML:
+			try {
+				TransformerFactory factory = TransformerFactory.newInstance();
+				Transformer transformer = factory.newTransformer();
+				StringWriter writer = new StringWriter();
+				transformer.transform(new DOMSource(obj.toXML(verbose)),
+						new StreamResult(writer));
+
+				return writer.getBuffer().toString();
+			} catch (TransformerException e) {
+				e.printStackTrace();
+			}
+
+			return null;
+    	}
+    	
     	return obj.toString();
     }
     
@@ -82,7 +114,7 @@ public class ServletResponseFormatter {
      * @param  obj Object to be serialized and formatted.
      * @return     Formatted output string.
      */
-    public String getFormattedResponse(Object obj) {
+    public String getFormattedResponse(Formattable obj) {
     	return getFormattedResponse(obj, format);
     }
 
@@ -121,8 +153,6 @@ public class ServletResponseFormatter {
 			format = ServletResponseFormat.XML;
 		} else if (strFormat.equalsIgnoreCase("txt")) {
 			format = ServletResponseFormat.TEXT;
-		} else if (strFormat.equalsIgnoreCase("html")) {
-			format = ServletResponseFormat.HTML;
 		} else if (strFormat.equalsIgnoreCase("csv")) {
 			format = ServletResponseFormat.CSV;
 		}
@@ -142,8 +172,6 @@ public class ServletResponseFormatter {
 			return "application/xml";
 		case TEXT:
 			return "text/plain";
-		case HTML:
-			return "text/html";
 		case CSV:
 			return "text/csv";
 		default:
@@ -158,5 +186,23 @@ public class ServletResponseFormatter {
 	 */
 	public String getMimeType() {
 		return getMimeType(format);
+	}
+	
+	/**
+	 * Should the formatted output be verbose?
+	 * 
+	 * @return Verbosity of the formatted output.
+	 */
+	public boolean getVerbose() {
+		return verbose;
+	}
+	
+	/**
+	 * Sets the verbosity of the formatted output.
+	 * 
+	 * @param verbose Should the formatted output be verbose?
+	 */
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
 	}
 }

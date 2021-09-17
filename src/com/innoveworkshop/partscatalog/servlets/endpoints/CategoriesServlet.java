@@ -14,6 +14,7 @@ import org.hibernate.Session;
 import com.innoveworkshop.partscatalog.config.Configuration;
 import com.innoveworkshop.partscatalog.db.DatabaseConnection;
 import com.innoveworkshop.partscatalog.db.models.Category;
+import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
 
 /**
@@ -48,7 +49,8 @@ public class CategoriesServlet extends HttpServlet {
 		
 		// Setup the response formatter and respond to the request.
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
-		formatter.respond(categories);
+		formatter.setVerbose(true);
+		formatter.respond(new FormattableCollection("categories", categories));
 	}
 
 	/**
