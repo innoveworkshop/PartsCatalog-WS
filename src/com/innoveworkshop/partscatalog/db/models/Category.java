@@ -3,7 +3,6 @@ package com.innoveworkshop.partscatalog.db.models;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -143,13 +142,11 @@ public class Category extends Formattable {
 			// Create the root element.
 			Document doc = builder.newDocument();
 			Element root = doc.createElement("category");
+			root.setAttribute("id", String.valueOf(id));
 			doc.appendChild(root);
 			
 			// Populate the root element.
-			Element child = doc.createElement("id");
-			child.setTextContent(String.valueOf(id));
-			root.appendChild(child);
-			child = doc.createElement("name");
+			Element child = doc.createElement("name");
 			child.setTextContent(name);
 			root.appendChild(child);
 			
@@ -205,19 +202,9 @@ public class Category extends Formattable {
 		
 		// Build a more complete text version.
 		StringBuilder buffer = new StringBuilder();
-		buffer.append(id);
-		buffer.append(" ");
-		buffer.append(toString());
-		buffer.append(" [ ");
-		for (Iterator<SubCategory> iterator = subCategories.iterator();
-				iterator.hasNext(); ) {
-			buffer.append(iterator.next().toPlainText());
-			
-			// Only add the comma if we are in the middle of the collection.
-			if (iterator.hasNext())
-				buffer.append(", ");
-		}
-		buffer.append(" ]");
+		buffer.append("ID: " + id + System.lineSeparator());
+		buffer.append("Name: " + name + System.lineSeparator());
+		buffer.append(new FormattableCollection("Sub-Categories", subCategories).toPlainText());
 		
 		return buffer.toString();
 	}
@@ -225,8 +212,8 @@ public class Category extends Formattable {
 	@Override
 	public List<String> getTableHeaders(boolean verbose) {
 		ArrayList<String> headers = new ArrayList<String>();
-		headers.add("id");
-		headers.add("name");
+		headers.add("ID");
+		headers.add("Name");
 		
 		if (verbose)
 			headers.add("subcategories");

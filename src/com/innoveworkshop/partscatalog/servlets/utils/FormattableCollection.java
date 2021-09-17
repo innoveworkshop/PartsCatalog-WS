@@ -126,9 +126,8 @@ public class FormattableCollection extends Formattable {
 		
 		// Build list as text.
 		buffer.append(keyName + ":" + System.lineSeparator());
-		for (Formattable obj : collection) {
-			buffer.append("    - " + obj.toPlainText(verbose) + System.lineSeparator());
-		}
+		for (Formattable obj : collection)
+			buffer.append("\t" + obj + System.lineSeparator());
 		
 		return buffer.toString();
 	}

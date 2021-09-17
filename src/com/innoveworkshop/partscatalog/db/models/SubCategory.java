@@ -138,13 +138,11 @@ public class SubCategory extends Formattable {
 			// Create the root element.
 			Document doc = builder.newDocument();
 			Element root = doc.createElement("subcategory");
+			root.setAttribute("id", String.valueOf(id));
 			doc.appendChild(root);
 			
 			// Populate the root element.
-			Element child = doc.createElement("id");
-			child.setTextContent(String.valueOf(id));
-			root.appendChild(child);
-			child = doc.createElement("name");
+			Element child = doc.createElement("name");
 			child.setTextContent(name);
 			root.appendChild(child);
 			if (verbose) {
@@ -197,12 +195,9 @@ public class SubCategory extends Formattable {
 		
 		// Build a more complete text version.
 		StringBuilder buffer = new StringBuilder();
-		buffer.append(id);
-		buffer.append(" ");
-		buffer.append(toString());
-		buffer.append(" [");
-		buffer.append(parentCategory.getName());
-		buffer.append("]");
+		buffer.append("ID: " + id + System.lineSeparator());
+		buffer.append("Name: " + name + System.lineSeparator());
+		buffer.append("Category: " + parentCategory + System.lineSeparator());
 		
 		return buffer.toString();
 	}
@@ -210,11 +205,11 @@ public class SubCategory extends Formattable {
 	@Override
 	public List<String> getTableHeaders(boolean verbose) {
 		ArrayList<String> headers = new ArrayList<String>();
-		headers.add("id");
-		headers.add("name");
+		headers.add("ID");
+		headers.add("Name");
 		
 		if (verbose)
-			headers.add("parent");
+			headers.add("Parent Category");
 		
 		return headers;
 	}

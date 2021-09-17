@@ -1,5 +1,10 @@
 package com.innoveworkshop.partscatalog.db.models;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +13,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.innoveworkshop.partscatalog.servlets.utils.Formattable;
 
 /**
  * A component property database object model.
@@ -16,7 +32,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "comp_properties")
-public class Property {
+public class Property extends Formattable {
 	@Id @GeneratedValue
 	@Column(name = "id")
 	private int id;
@@ -117,5 +133,103 @@ public class Property {
 	@Override
 	public String toString() {
 		return name + ": " + value;
+	}
+
+	@Override
+	public JSONObject toJSON(boolean verbose) {
+		JSONObject json = new JSONObject();
+		
+		// Populate the JSON object.
+		json.put("id", id);
+		json.put("name", name);
+		json.put("value", value);
+		
+		return json;
+	}
+
+	@Override
+	public Document toXML(boolean verbose) {
+		try {
+			// Setup the XML writer.
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+
+			// Create the root element.
+			Document doc = builder.newDocument();
+			Element root = doc.createElement("property");
+			root.setAttribute("id", String.valueOf(id));
+			doc.appendChild(root);
+			
+			// Populate the root element.
+			Element child = doc.createElement("name");
+			child.setTextContent(name);
+			root.appendChild(child);
+			child = doc.createElement("value");
+			child.setTextContent(value);
+			root.appendChild(child);
+			
+			return doc;
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public String toCSV(boolean verbose) {
+		try {
+			// Setup the CSV writer.
+			StringWriter writer = new StringWriter();
+			CSVFormat.Builder builder = CSVFormat.Builder.create(CSVFormat.DEFAULT);
+			builder.setHeader("id", "name", "value");
+			
+			// Actually build the CSV row.
+			try (CSVPrinter csv = new CSVPrinter(writer, builder.build())) {
+				csv.printRecord(id, name, value);
+				csv.flush();
+			}
+			
+			return writer.toString();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+	@Override
+	public String toPlainText(boolean verbose) {
+		// Simply return the name if we don't need it to be verbose.
+		if (!verbose)
+			return toString();
+		
+		// Build a more complete text version.
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("ID: " + id + System.lineSeparator());
+		buffer.append("Name: " + name + System.lineSeparator());
+		buffer.append("Value: " + value + System.lineSeparator());
+		
+		return buffer.toString();
+	}
+
+	@Override
+	public List<String> getTableHeaders(boolean verbose) {
+		ArrayList<String> headers = new ArrayList<String>();
+		headers.add("ID");
+		headers.add("Name");
+		headers.add("Value");
+		
+		return headers;
+	}
+
+	@Override
+	public List<String> getTableRow(boolean verbose) {
+		ArrayList<String> columns = new ArrayList<String>();
+		columns.add(String.valueOf(id));
+		columns.add(name);
+		columns.add(value);
+		
+		return columns;
 	}
 }

@@ -1,5 +1,9 @@
 package com.innoveworkshop.partscatalog.db.models;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -11,6 +15,20 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import com.innoveworkshop.partscatalog.servlets.utils.Formattable;
+import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
 
 /**
  * A component database object model.
@@ -19,7 +37,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "components")
-public class Component {
+public class Component extends Formattable {
 	@Id @GeneratedValue
 	@Column(name = "id")
 	private int id;
@@ -226,5 +244,159 @@ public class Component {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	@Override
+	public JSONObject toJSON(boolean verbose) {
+		JSONObject json = new JSONObject();
+		
+		// Populate the JSON object.
+		json.put("id", id);
+		json.put("name", name);
+		json.put("quantity", quantity);
+		json.put("description", description);
+		json.put("category", category.toJSON(false));
+		json.put("subcategory", subcategory.toJSON(false));
+		json.put("package", caseStyle.toJSON(false));
+		
+		// Populate sub-categories in case we actually want it.
+		if (verbose)
+			json.put("properties", new FormattableCollection("properties",
+					properties).toJSONArray());
+		
+		return json;
+	}
+
+	@Override
+	public Document toXML(boolean verbose) {
+		try {
+			// Setup the XML writer.
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+
+			// Create the root element.
+			Document doc = builder.newDocument();
+			Element root = doc.createElement("component");
+			root.setAttribute("id", String.valueOf(id));
+			doc.appendChild(root);
+			
+			// Populate the root element.
+			Element child = doc.createElement("name");
+			child.setTextContent(name);
+			root.appendChild(child);
+			child = doc.createElement("quantity");
+			child.setTextContent(String.valueOf(quantity));
+			root.appendChild(child);
+			child = doc.createElement("description");
+			child.setTextContent(description);
+			root.appendChild(child);
+			Node node = doc.importNode(category.toXML(false).getDocumentElement(), true);
+			root.appendChild(node);
+			node = doc.importNode(subcategory.toXML(false).getDocumentElement(), true);
+			root.appendChild(node);
+			node = doc.importNode(caseStyle.toXML(false).getDocumentElement(), true);
+			root.appendChild(node);
+			
+			// Populate sub-categories in case we actually want it.
+			if (verbose) {
+				node = doc.importNode(new FormattableCollection("properties",
+						properties).toXML().getDocumentElement(), true);
+				root.appendChild(node);
+			}
+			
+			return doc;
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public String toCSV(boolean verbose) {
+		try {
+			// Setup the CSV writer.
+			StringWriter writer = new StringWriter();
+			CSVFormat.Builder builder = CSVFormat.Builder.create(CSVFormat.DEFAULT);
+			builder.setHeader("id", "name", "quantity", "description", "category",
+					"subcategory", "package");
+			if (verbose)
+				builder.setHeader("id", "name", "quantity", "description", "category",
+						"subcategory", "package", "properties");
+			
+			// Actually build the CSV row.
+			try (CSVPrinter csv = new CSVPrinter(writer, builder.build())) {
+				if (!verbose) {
+					csv.printRecord(id, name, quantity, description, category.toString(),
+							subcategory.toString(), caseStyle.toString());
+				} else {
+					csv.printRecord(id, name, quantity, description, category.toString(),
+							subcategory.toString(), caseStyle.toString(),
+							StringUtils.join(properties, System.lineSeparator()));
+				}
+
+				csv.flush();
+			}
+			
+			return writer.toString();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+	@Override
+	public String toPlainText(boolean verbose) {
+		// Simply return the name if we don't need it to be verbose.
+		if (!verbose)
+			return toString();
+		
+		// Build a more complete text version.
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("ID: " + id + System.lineSeparator());
+		buffer.append("Name: " + name + System.lineSeparator());
+		buffer.append("Quantity: " + quantity + System.lineSeparator());
+		buffer.append("Description: " + description + System.lineSeparator());
+		buffer.append("Category: " + category + System.lineSeparator());
+		buffer.append("Sub-Category: " + subcategory + System.lineSeparator());
+		buffer.append("Package: " + caseStyle + System.lineSeparator());
+		buffer.append(new FormattableCollection("Properties", properties).toPlainText());
+		
+		return buffer.toString();
+	}
+
+	@Override
+	public List<String> getTableHeaders(boolean verbose) {
+		ArrayList<String> headers = new ArrayList<String>();
+		headers.add("ID");
+		headers.add("Name");
+		headers.add("Quantity");
+		headers.add("Description");
+		headers.add("Category");
+		headers.add("Sub-Category");
+		headers.add("Package");
+		
+		if (verbose)
+			headers.add("Properties");
+		
+		return headers;
+	}
+
+	@Override
+	public List<String> getTableRow(boolean verbose) {
+		ArrayList<String> columns = new ArrayList<String>();
+		columns.add(String.valueOf(id));
+		columns.add(name);
+		columns.add(String.valueOf(quantity));
+		columns.add(description);
+		columns.add(category.toString());
+		columns.add(subcategory.toString());
+		columns.add(caseStyle.toString());
+		
+		if (verbose)
+			columns.add(StringUtils.join(properties, System.lineSeparator()));
+		
+		return columns;
 	}
 }
