@@ -13,8 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -64,7 +64,7 @@ public class Component extends Formattable {
 	@JoinColumn(name = "package_id", nullable = true)
 	private CaseStyle caseStyle;
 	
-	@ManyToMany(mappedBy = "component", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "component", fetch = FetchType.LAZY)
 	private Set<Property> properties;
 	
 	/**
