@@ -16,6 +16,7 @@ import com.innoveworkshop.partscatalog.config.Configuration;
 import com.innoveworkshop.partscatalog.db.DatabaseConnection;
 import com.innoveworkshop.partscatalog.db.models.Category;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
+import com.innoveworkshop.partscatalog.servlets.utils.FormattableMessage;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
 
 /**
@@ -60,5 +61,67 @@ public class CategoriesServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(new FormattableCollection("categories", categories));
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Category category = null;
+
+		// Check if we are editing or adding.
+		if (request.getParameter("id") == null) {
+			// Create a brand new one.
+			category = new Category();
+		} else {
+			// Get the category object from the database.
+			category = (Category)session.get(Category.class,
+					Integer.parseInt(request.getParameter("id")));
+			
+			// Check if it exists.
+			if (category == null) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
+				return;
+			}
+		}
+		
+		// Check for required parameters.
+		if (request.getParameter("name") == null) {
+			response.sendError(422, "Unprocessable Entity");
+			return;
+		}
+		
+		// Update the object and commit changes.
+		category.setName(request.getParameter("name"));
+		session.saveOrUpdate(category);
+		
+		// Setup the response formatter and respond to the request.
+		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
+		formatter.setVerbose(true);
+		formatter.respond(category);
+	}
+
+	@Override
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// Check if we have the required ID parameter.
+		if (request.getParameter("id") == null) {
+			response.sendError(422, "Unprocessable Entity");
+			return;
+		}
+		
+		// Get the category object from the database and check if it exists.
+		Category category = (Category)session.get(Category.class,
+				Integer.parseInt(request.getParameter("id")));
+		if (category == null) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		
+		// Delete the entry and commit the changes.
+		session.delete(category);
+		session.getTransaction().commit();
+		
+		// Setup the response formatter and respond to the request.
+		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
+		formatter.setVerbose(true);
+		formatter.respond(new FormattableMessage("Deleted successfully"));
 	}
 }
