@@ -14,8 +14,11 @@ import org.hibernate.Session;
 
 import com.innoveworkshop.partscatalog.config.Configuration;
 import com.innoveworkshop.partscatalog.db.DatabaseConnection;
+import com.innoveworkshop.partscatalog.db.models.Component;
 import com.innoveworkshop.partscatalog.db.models.Property;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
+import com.innoveworkshop.partscatalog.servlets.utils.FormattableMessage;
+import com.innoveworkshop.partscatalog.servlets.utils.ServletParameterChecker;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
 
 /**
@@ -45,10 +48,9 @@ public class PropertiesServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// Check if we have the required parent component XOR ID parameter.
-		if (!((request.getParameter("component") != null) ^ (request.getParameter("id") != null))) {
-			response.sendError(422, "Unprocessable Entity");
+		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
+		if (!paramChecker.requireXOR("component", "id"))
 			return;
-		}
 		
 		// List properties.
 		Query query;
@@ -68,5 +70,75 @@ public class PropertiesServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(new FormattableCollection("properties", properties));
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
+		Property property = null;
+
+		// Check if we are editing or adding.
+		if (request.getParameter("id") == null) {
+			// Create a brand new one.
+			property = new Property();
+		} else {
+			// Get the object from the database.
+			property = (Property)session.get(Property.class,
+					Integer.parseInt(request.getParameter("id")));
+			
+			// Check if it exists.
+			if (property == null) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
+				return;
+			}
+		}
+		
+		// Check for required parameters.
+		if (!paramChecker.requireAll("name", "value", "component"))
+			return;
+		
+		// Check if the parent component exists.
+		Component component = (Component)session.get(Component.class,
+				Integer.parseInt(request.getParameter("component")));
+		if (component == null) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		
+		// Update the object and commit changes.
+		property.setName(request.getParameter("name"));
+		property.setValue(request.getParameter("value"));
+		property.setComponent(component);
+		session.saveOrUpdate(property);
+		
+		// Setup the response formatter and respond to the request.
+		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
+		formatter.setVerbose(true);
+		formatter.respond(property);
+	}
+
+	@Override
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// Check if we have the required ID parameter.
+		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
+		if (!paramChecker.require("id"))
+			return;
+		
+		// Get the object from the database and check if it exists.
+		Property property = (Property)session.get(Property.class,
+				Integer.parseInt(request.getParameter("id")));
+		if (property == null) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		
+		// Delete the entry and commit the changes.
+		session.delete(property);
+		session.getTransaction().commit();
+		
+		// Setup the response formatter and respond to the request.
+		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
+		formatter.setVerbose(true);
+		formatter.respond(new FormattableMessage("Deleted successfully"));
 	}
 }
