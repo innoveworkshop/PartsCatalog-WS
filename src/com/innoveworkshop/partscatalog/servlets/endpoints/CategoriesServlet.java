@@ -17,6 +17,7 @@ import com.innoveworkshop.partscatalog.db.DatabaseConnection;
 import com.innoveworkshop.partscatalog.db.models.Category;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableMessage;
+import com.innoveworkshop.partscatalog.servlets.utils.ServletParameterChecker;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
 
 /**
@@ -65,6 +66,7 @@ public class CategoriesServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		Category category = null;
 
 		// Check if we are editing or adding.
@@ -72,7 +74,7 @@ public class CategoriesServlet extends HttpServlet {
 			// Create a brand new one.
 			category = new Category();
 		} else {
-			// Get the category object from the database.
+			// Get the object from the database.
 			category = (Category)session.get(Category.class,
 					Integer.parseInt(request.getParameter("id")));
 			
@@ -84,10 +86,8 @@ public class CategoriesServlet extends HttpServlet {
 		}
 		
 		// Check for required parameters.
-		if (request.getParameter("name") == null) {
-			response.sendError(422, "Unprocessable Entity");
+		if (!paramChecker.require("name"))
 			return;
-		}
 		
 		// Update the object and commit changes.
 		category.setName(request.getParameter("name"));
@@ -102,10 +102,9 @@ public class CategoriesServlet extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// Check if we have the required ID parameter.
-		if (request.getParameter("id") == null) {
-			response.sendError(422, "Unprocessable Entity");
+		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
+		if (!paramChecker.require("id"))
 			return;
-		}
 		
 		// Get the category object from the database and check if it exists.
 		Category category = (Category)session.get(Category.class,
