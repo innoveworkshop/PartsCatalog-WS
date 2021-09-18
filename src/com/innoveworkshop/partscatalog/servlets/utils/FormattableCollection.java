@@ -48,8 +48,10 @@ public class FormattableCollection extends Formattable {
 		JSONArray array = new JSONArray();
 		
 		// Go through the collection converting it to JSON objects on the way.
-		for (Formattable obj : collection)
-			array.put(obj.toJSON(verbose));
+		if (collection != null) {
+			for (Formattable obj : collection)
+				array.put(obj.toJSON(verbose));
+		}
 		
 		return array;
 	}
