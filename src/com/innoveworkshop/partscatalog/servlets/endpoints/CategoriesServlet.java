@@ -29,7 +29,6 @@ import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
 public class CategoriesServlet extends HttpServlet {
 	private static final long serialVersionUID = -3925669235622189733L;
 	private DatabaseConnection db;
-	private Session session;
 
 	/**
      * @see HttpServlet#HttpServlet()
@@ -39,7 +38,6 @@ public class CategoriesServlet extends HttpServlet {
         
 		// Connect to the database and open a new session.
 		db = new DatabaseConnection(Configuration.DB_MODELS_PACKAGE);
-		session = db.openSession();
     }
 
 	/**
@@ -47,6 +45,8 @@ public class CategoriesServlet extends HttpServlet {
 	 */
 	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Session session = db.openSession();
+
 		Query query;
 		if (request.getParameter("id") == null) {
 			// List all categories.
@@ -62,10 +62,13 @@ public class CategoriesServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(new FormattableCollection("categories", categories));
+		
+		session.close();
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Session session = db.openSession();
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		Category category = null;
 
@@ -98,10 +101,14 @@ public class CategoriesServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(category);
+		
+		session.close();
 	}
 
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Session session = db.openSession();
+		
 		// Check if we have the required ID parameter.
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		if (!paramChecker.require("id"))
@@ -123,5 +130,7 @@ public class CategoriesServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(new FormattableMessage("Deleted successfully"));
+		
+		session.close();
 	}
 }

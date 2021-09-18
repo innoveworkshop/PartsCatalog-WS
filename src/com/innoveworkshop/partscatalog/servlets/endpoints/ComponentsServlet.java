@@ -32,7 +32,6 @@ import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
 public class ComponentsServlet extends HttpServlet {
 	private static final long serialVersionUID = -3925669235622189733L;
 	private DatabaseConnection db;
-	private Session session;
 
 	/**
      * @see HttpServlet#HttpServlet()
@@ -40,15 +39,16 @@ public class ComponentsServlet extends HttpServlet {
     public ComponentsServlet() {
         super();
         
-		// Connect to the database and open a new session.
+		// Connect to the database.
 		db = new DatabaseConnection(Configuration.DB_MODELS_PACKAGE);
-		session = db.openSession();
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Session session = db.openSession();
+		
 		Query query;
 		if (request.getParameter("id") == null) {
 			// List all components.
@@ -65,10 +65,13 @@ public class ComponentsServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(new FormattableCollection("components", components));
+		
+		session.close();
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Session session = db.openSession();
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		Component component = null;
 
@@ -131,10 +134,14 @@ public class ComponentsServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(component);
+		
+		session.close();
 	}
 
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Session session = db.openSession();
+		
 		// Check if we have the required ID parameter.
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		if (!paramChecker.require("id"))
@@ -156,5 +163,6 @@ public class ComponentsServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(new FormattableMessage("Deleted successfully"));
+		session.close();
 	}
 }

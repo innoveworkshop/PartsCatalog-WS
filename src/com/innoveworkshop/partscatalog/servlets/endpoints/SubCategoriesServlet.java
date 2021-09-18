@@ -30,7 +30,6 @@ import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
 public class SubCategoriesServlet extends HttpServlet {
 	private static final long serialVersionUID = -3925669235622189733L;
 	private DatabaseConnection db;
-	private Session session;
 
 	/**
      * @see HttpServlet#HttpServlet()
@@ -40,13 +39,13 @@ public class SubCategoriesServlet extends HttpServlet {
         
 		// Connect to the database and open a new session.
 		db = new DatabaseConnection(Configuration.DB_MODELS_PACKAGE);
-		session = db.openSession();
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Session session = db.openSession();
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		
 		// Check if we have the required parent category XOR ID parameter.
@@ -74,10 +73,13 @@ public class SubCategoriesServlet extends HttpServlet {
 		
 		// Respond to the request.
 		formatter.respond(new FormattableCollection("subcategories", subCategories));
+		
+		session.close();
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Session session = db.openSession();
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		SubCategory subCategory = null;
 
@@ -119,10 +121,14 @@ public class SubCategoriesServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(subCategory);
+		
+		session.close();
 	}
 
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Session session = db.openSession();
+		
 		// Check if we have the required ID parameter.
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		if (!paramChecker.require("id"))
@@ -144,5 +150,7 @@ public class SubCategoriesServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(new FormattableMessage("Deleted successfully"));
+		
+		session.close();
 	}
 }

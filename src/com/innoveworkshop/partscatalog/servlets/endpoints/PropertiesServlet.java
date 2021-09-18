@@ -30,7 +30,6 @@ import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
 public class PropertiesServlet extends HttpServlet {
 	private static final long serialVersionUID = -3925669235622189733L;
 	private DatabaseConnection db;
-	private Session session;
 
 	/**
      * @see HttpServlet#HttpServlet()
@@ -40,13 +39,14 @@ public class PropertiesServlet extends HttpServlet {
         
 		// Connect to the database and open a new session.
 		db = new DatabaseConnection(Configuration.DB_MODELS_PACKAGE);
-		session = db.openSession();
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Session session = db.openSession();
+		
 		// Check if we have the required parent component XOR ID parameter.
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		if (!paramChecker.requireXOR("component", "id"))
@@ -70,10 +70,13 @@ public class PropertiesServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(new FormattableCollection("properties", properties));
+		
+		session.close();
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Session session = db.openSession();
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		Property property = null;
 
@@ -116,12 +119,16 @@ public class PropertiesServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(property);
+		
+		session.close();
 	}
 
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// Check if we have the required ID parameter.
+		Session session = db.openSession();
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
+		
+		// Check if we have the required ID parameter.
 		if (!paramChecker.require("id"))
 			return;
 		
@@ -141,5 +148,7 @@ public class PropertiesServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(new FormattableMessage("Deleted successfully"));
+		
+		session.close();
 	}
 }
