@@ -92,6 +92,7 @@ public class CaseStyleServlet extends HttpServlet {
 		// Update the object and commit changes.
 		caseStyle.setName(request.getParameter("name"));
 		session.saveOrUpdate(caseStyle);
+		session.getTransaction().commit();
 		
 		// Setup the response formatter and respond to the request.
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);

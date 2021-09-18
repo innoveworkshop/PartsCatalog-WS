@@ -92,6 +92,7 @@ public class CategoriesServlet extends HttpServlet {
 		// Update the object and commit changes.
 		category.setName(request.getParameter("name"));
 		session.saveOrUpdate(category);
+		session.getTransaction().commit();
 		
 		// Setup the response formatter and respond to the request.
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);

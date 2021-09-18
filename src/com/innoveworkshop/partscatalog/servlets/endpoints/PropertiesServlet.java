@@ -110,6 +110,7 @@ public class PropertiesServlet extends HttpServlet {
 		property.setValue(request.getParameter("value"));
 		property.setComponent(component);
 		session.saveOrUpdate(property);
+		session.getTransaction().commit();
 		
 		// Setup the response formatter and respond to the request.
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);

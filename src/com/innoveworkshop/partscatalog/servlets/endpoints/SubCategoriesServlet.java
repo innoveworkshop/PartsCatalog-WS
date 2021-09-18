@@ -113,6 +113,7 @@ public class SubCategoriesServlet extends HttpServlet {
 		subCategory.setName(request.getParameter("name"));
 		subCategory.setParentCategory(category);
 		session.saveOrUpdate(subCategory);
+		session.getTransaction().commit();
 		
 		// Setup the response formatter and respond to the request.
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
