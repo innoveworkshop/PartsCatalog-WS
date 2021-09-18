@@ -14,8 +14,13 @@ import org.hibernate.Session;
 
 import com.innoveworkshop.partscatalog.config.Configuration;
 import com.innoveworkshop.partscatalog.db.DatabaseConnection;
+import com.innoveworkshop.partscatalog.db.models.CaseStyle;
 import com.innoveworkshop.partscatalog.db.models.Category;
+import com.innoveworkshop.partscatalog.db.models.Component;
+import com.innoveworkshop.partscatalog.db.models.SubCategory;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
+import com.innoveworkshop.partscatalog.servlets.utils.FormattableMessage;
+import com.innoveworkshop.partscatalog.servlets.utils.ServletParameterChecker;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
 
 /**
@@ -54,11 +59,102 @@ public class ComponentsServlet extends HttpServlet {
 			query.setParameter("id", Integer.parseInt(request.getParameter("id")));
 		}
 		@SuppressWarnings("unchecked")
-		List<Category> categories = (List<Category>)query.getResultList();
+		List<Component> components = (List<Component>)query.getResultList();
 		
 		// Setup the response formatter and respond to the request.
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
-		formatter.respond(new FormattableCollection("categories", categories));
+		formatter.respond(new FormattableCollection("components", components));
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
+		Component component = null;
+
+		// Check if we are editing or adding.
+		if (request.getParameter("id") == null) {
+			// Create a brand new one.
+			component = new Component();
+		} else {
+			// Get the object from the database.
+			component = (Component)session.get(Component.class,
+					Integer.parseInt(request.getParameter("id")));
+			
+			// Check if it exists.
+			if (component == null) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
+				return;
+			}
+		}
+		
+		// Check for required parameters.
+		if (!paramChecker.requireAll("name", "quantity", "description", "category",
+				"subcategory", "package"))
+			return;
+		
+		// Check if the category exists.
+		Category category = (Category)session.get(Category.class,
+				Integer.parseInt(request.getParameter("category")));
+		if (category == null) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		
+		// Check if the sub-category exists.
+		SubCategory subCategory = (SubCategory)session.get(SubCategory.class,
+				Integer.parseInt(request.getParameter("subcategory")));
+		if (subCategory == null) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		
+		// Check if the package exists.
+		CaseStyle caseStyle = (CaseStyle)session.get(CaseStyle.class,
+				Integer.parseInt(request.getParameter("package")));
+		if (caseStyle == null) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		
+		// Update the object and commit changes.
+		component.setName(request.getParameter("name"));
+		component.setQuantity(Integer.parseInt(request.getParameter("quantity")));
+		component.setDescription(request.getParameter("description"));
+		component.setCategory(category);
+		component.setSubCategory(subCategory);
+		component.setCaseStyle(caseStyle);
+		session.saveOrUpdate(component);
+		session.getTransaction().commit();
+		
+		// Setup the response formatter and respond to the request.
+		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
+		formatter.setVerbose(true);
+		formatter.respond(component);
+	}
+
+	@Override
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// Check if we have the required ID parameter.
+		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
+		if (!paramChecker.require("id"))
+			return;
+		
+		// Get the object from the database and check if it exists.
+		Component component = (Component)session.get(Component.class,
+				Integer.parseInt(request.getParameter("id")));
+		if (component == null) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		
+		// Delete the entry and commit the changes.
+		session.delete(component);
+		session.getTransaction().commit();
+		
+		// Setup the response formatter and respond to the request.
+		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
+		formatter.setVerbose(true);
+		formatter.respond(new FormattableMessage("Deleted successfully"));
 	}
 }
