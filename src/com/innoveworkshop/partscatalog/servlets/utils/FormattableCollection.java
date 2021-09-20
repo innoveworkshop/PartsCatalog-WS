@@ -86,9 +86,11 @@ public class FormattableCollection extends Formattable {
 			doc.appendChild(root);
 			
 			// Go through the collection converting it to XML elements on the way.
-			for (Formattable obj : collection) {
-				Node node = doc.importNode(obj.toXML(verbose).getDocumentElement(), true);
-				root.appendChild(node);
+			if (collection != null) {
+				for (Formattable obj : collection) {
+					Node node = doc.importNode(obj.toXML(verbose).getDocumentElement(), true);
+					root.appendChild(node);
+				}
 			}
 			
 			return doc;
