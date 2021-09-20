@@ -61,10 +61,23 @@ public class ComponentsServlet extends HttpServlet {
 		@SuppressWarnings("unchecked")
 		List<Component> components = (List<Component>)query.getResultList();
 		
-		// Setup the response formatter and respond to the request.
+		// Setup the response formatter.
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
-		formatter.respond(new FormattableCollection("components", components));
+		
+		// Respond to the request.
+		if (request.getParameter("id") != null) {
+			// Requested only a single object.
+			if (components.isEmpty()) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
+				return;
+			}
+			
+			formatter.respond(components.get(0));
+		} else {
+			// Requested a list of objects.
+			formatter.respond(new FormattableCollection("components", components));
+		}
 		
 		session.close();
 	}

@@ -69,7 +69,20 @@ public class PropertiesServlet extends HttpServlet {
 		// Setup the response formatter and respond to the request.
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
-		formatter.respond(new FormattableCollection("properties", properties));
+		
+		// Respond to the request.
+		if (request.getParameter("id") != null) {
+			// Requested only a single object.
+			if (properties.isEmpty()) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
+				return;
+			}
+			
+			formatter.respond(properties.get(0));
+		} else {
+			// Requested a list of objects.
+			formatter.respond(new FormattableCollection("properties", properties));
+		}
 		
 		session.close();
 	}

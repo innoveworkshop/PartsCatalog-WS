@@ -72,7 +72,18 @@ public class SubCategoriesServlet extends HttpServlet {
 		List<SubCategory> subCategories = (List<SubCategory>)query.getResultList();
 		
 		// Respond to the request.
-		formatter.respond(new FormattableCollection("subcategories", subCategories));
+		if (request.getParameter("id") != null) {
+			// Requested only a single object.
+			if (subCategories.isEmpty()) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
+				return;
+			}
+			
+			formatter.respond(subCategories.get(0));
+		} else {
+			// Requested a list of objects.
+			formatter.respond(new FormattableCollection("subcategories", subCategories));
+		}
 		
 		session.close();
 	}
