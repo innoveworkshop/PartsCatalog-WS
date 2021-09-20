@@ -23,6 +23,7 @@ import org.apache.commons.csv.CSVPrinter;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.innoveworkshop.partscatalog.servlets.utils.Formattable;
 
@@ -144,6 +145,8 @@ public class Property extends Formattable {
 		json.put("id", id);
 		json.put("name", name);
 		json.put("value", value);
+		if (verbose)
+			json.put("parent", component.toJSON());
 		
 		return json;
 	}
@@ -168,6 +171,10 @@ public class Property extends Formattable {
 			child = doc.createElement("value");
 			child.setTextContent(value);
 			root.appendChild(child);
+			if (verbose) {
+				Node node = doc.importNode(component.toXML().getDocumentElement(), true);
+				root.appendChild(node);
+			}
 			
 			return doc;
 		} catch (ParserConfigurationException e) {
@@ -184,10 +191,17 @@ public class Property extends Formattable {
 			StringWriter writer = new StringWriter();
 			CSVFormat.Builder builder = CSVFormat.Builder.create(CSVFormat.DEFAULT);
 			builder.setHeader("id", "name", "value");
+			if (verbose)
+				builder.setHeader("id", "name", "value", "parent");
 			
 			// Actually build the CSV row.
 			try (CSVPrinter csv = new CSVPrinter(writer, builder.build())) {
-				csv.printRecord(id, name, value);
+				if (!verbose) {
+					csv.printRecord(id, name, value);
+				} else {
+					csv.printRecord(id, name, value, component);
+				}
+				
 				csv.flush();
 			}
 			
@@ -210,6 +224,7 @@ public class Property extends Formattable {
 		buffer.append("ID: " + id + System.lineSeparator());
 		buffer.append("Name: " + name + System.lineSeparator());
 		buffer.append("Value: " + value + System.lineSeparator());
+		buffer.append("Component: " + component + System.lineSeparator());
 		
 		return buffer.toString();
 	}
@@ -220,6 +235,7 @@ public class Property extends Formattable {
 		headers.add("ID");
 		headers.add("Name");
 		headers.add("Value");
+		headers.add("Parent Component");
 		
 		return headers;
 	}
@@ -230,6 +246,7 @@ public class Property extends Formattable {
 		columns.add(String.valueOf(id));
 		columns.add(name);
 		columns.add(value);
+		columns.add(component.getName());
 		
 		return columns;
 	}
