@@ -1,0 +1,48 @@
+{
+	"name": "PartsCatalog",
+	"description": "A web application to browse through your parts bins, inside your computer",
+	"display": "standalone",
+	"orientation": "any",
+	"scope": "/",
+	"start_url": "./?utm_source=web_app_manifest",
+	"theme-color": "#0099BC",
+	"background_color": "whitesmoke",
+	"icons": [
+		{
+			"src": "favicon/favicon-32x32.png",
+			"sizes": "32x32",
+			"type": "image/png",
+			"density": 0.75
+		},
+		{
+			"src": "favicon/apple-touch-icon-57x57.png",
+			"sizes": "57x57",
+			"type": "image/png",
+			"density": 1.0
+		},
+		{
+			"src": "favicon/apple-touch-icon-72x72.png",
+			"sizes": "72x72",
+			"type": "image/png",
+			"density": 1.5
+		},
+		{
+			"src": "favicon/favicon-96x96.png",
+			"sizes": "96x96",
+			"type": "image/png",
+			"density": 2.0
+		},
+		{
+			"src": "favicon/apple-touch-icon-144x144.png",
+			"sizes": "144x144",
+			"type": "image/png",
+			"density": 3.0
+		},
+		{
+			"src": "favicon/favicon-196x196.png",
+			"sizes": "196x196",
+			"type": "image/png",
+			"density": 4.0
+		}
+	]
+}
