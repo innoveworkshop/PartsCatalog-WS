@@ -57,11 +57,11 @@ public class Component extends Formattable {
 	private Category category;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "subcategory_id", nullable = true)
+	@JoinColumn(name = "subcategory_id", nullable = false)
 	private SubCategory subCategory;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "package_id", nullable = true)
+	@JoinColumn(name = "package_id", nullable = false)
 	private CaseStyle caseStyle;
 	
 	@OneToMany(mappedBy = "component", fetch = FetchType.LAZY)
