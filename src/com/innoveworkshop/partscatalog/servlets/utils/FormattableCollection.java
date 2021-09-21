@@ -169,4 +169,22 @@ public class FormattableCollection extends Formattable {
 	public void setKeyName(String keyName) {
 		this.keyName = keyName;
 	}
+	
+	/**
+	 * Gets the formattable collection.
+	 * 
+	 * @return Collection of formattable objects.
+	 */
+	public Collection<? extends Formattable> getCollection() {
+		return collection;
+	}
+	
+	/**
+	 * Sets the formattable collection.
+	 * 
+	 * @param collection Collection of formattable objects.
+	 */
+	public void setCollection(Collection<? extends Formattable> collection) {
+		this.collection = collection;
+	}
 }
