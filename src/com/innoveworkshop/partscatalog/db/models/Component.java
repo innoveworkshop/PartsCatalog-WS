@@ -58,7 +58,7 @@ public class Component extends Formattable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "subcategory_id", nullable = true)
-	private SubCategory subcategory;
+	private SubCategory subCategory;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "package_id", nullable = true)
@@ -169,7 +169,7 @@ public class Component extends Formattable {
 	 * @return Component sub-category.
 	 */
 	public SubCategory getSubCategory() {
-		return subcategory;
+		return subCategory;
 	}
 	
 	/**
@@ -178,7 +178,7 @@ public class Component extends Formattable {
 	 * @param subcategory Component sub-category.
 	 */
 	public void setSubCategory(SubCategory subcategory) {
-		this.subcategory = subcategory;
+		this.subCategory = subcategory;
 	}
 	
 	/**
@@ -257,7 +257,7 @@ public class Component extends Formattable {
 		json.put("quantity", quantity);
 		json.put("description", description);
 		json.put("category", category.toJSON(false));
-		json.put("subcategory", subcategory.toJSON(false));
+		json.put("subcategory", subCategory.toJSON(false));
 		json.put("package", caseStyle != null ? caseStyle.toJSON(false) :
 			JSONObject.NULL);
 		
@@ -294,10 +294,14 @@ public class Component extends Formattable {
 			root.appendChild(child);
 			Node node = doc.importNode(category.toXML(false).getDocumentElement(), true);
 			root.appendChild(node);
-			node = doc.importNode(subcategory.toXML(false).getDocumentElement(), true);
-			root.appendChild(node);
-			node = doc.importNode(caseStyle.toXML(false).getDocumentElement(), true);
-			root.appendChild(node);
+			if (subCategory != null) {
+				node = doc.importNode(subCategory.toXML(false).getDocumentElement(), true);
+				root.appendChild(node);
+			}
+			if (caseStyle != null) {
+				node = doc.importNode(caseStyle.toXML(false).getDocumentElement(), true);
+				root.appendChild(node);
+			}
 			
 			// Populate sub-categories in case we actually want it.
 			if (verbose) {
@@ -330,10 +334,10 @@ public class Component extends Formattable {
 			try (CSVPrinter csv = new CSVPrinter(writer, builder.build())) {
 				if (!verbose) {
 					csv.printRecord(id, name, quantity, description, category.toString(),
-							subcategory.toString(), caseStyle.toString());
+							subCategory.toString(), caseStyle.toString());
 				} else {
 					csv.printRecord(id, name, quantity, description, category.toString(),
-							subcategory.toString(), caseStyle.toString(),
+							subCategory.toString(), caseStyle.toString(),
 							StringUtils.join(properties, System.lineSeparator()));
 				}
 
@@ -361,7 +365,7 @@ public class Component extends Formattable {
 		buffer.append("Quantity: " + quantity + System.lineSeparator());
 		buffer.append("Description: " + description + System.lineSeparator());
 		buffer.append("Category: " + category + System.lineSeparator());
-		buffer.append("Sub-Category: " + subcategory + System.lineSeparator());
+		buffer.append("Sub-Category: " + subCategory + System.lineSeparator());
 		buffer.append("Package: " + caseStyle + System.lineSeparator());
 		buffer.append(new FormattableCollection("Properties", properties).toPlainText());
 		
@@ -393,7 +397,7 @@ public class Component extends Formattable {
 		columns.add(String.valueOf(quantity));
 		columns.add(description);
 		columns.add(category.toString());
-		columns.add(subcategory.toString());
+		columns.add(subCategory.toString());
 		columns.add(caseStyle.toString());
 		
 		if (verbose)
