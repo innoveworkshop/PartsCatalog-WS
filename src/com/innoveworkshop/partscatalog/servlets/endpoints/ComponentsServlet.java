@@ -49,14 +49,31 @@ public class ComponentsServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Session session = db.openSession();
 		
+		// Check if we have the required parent category XOR ID parameter.
+		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
+		if (!paramChecker.requireOnlyOneOrNone("id", "category", "subcategory", "package"))
+			return;
+		
 		Query query;
-		if (request.getParameter("id") == null) {
-			// List all components.
-			query = session.createQuery("FROM Component");
-		} else {
+		if (request.getParameter("id") != null) {
 			// Get a single component.
 			query = session.createQuery("FROM Component WHERE id = :id");
 			query.setParameter("id", Integer.parseInt(request.getParameter("id")));
+		} else if (request.getParameter("category") != null) {
+			// List components from a category.
+			query = session.createQuery("FROM Component WHERE category.id = :category");
+			query.setParameter("category", Integer.parseInt(request.getParameter("category")));
+		} else if (request.getParameter("subcategory") != null) {
+			// List components from a sub-category.
+			query = session.createQuery("FROM Component WHERE subCategory.id = :subcategory");
+			query.setParameter("subcategory", Integer.parseInt(request.getParameter("subcategory")));
+		} else if (request.getParameter("package") != null) {
+			// List components from a package.
+			query = session.createQuery("FROM Component WHERE caseStyle.id = :package");
+			query.setParameter("package", Integer.parseInt(request.getParameter("package")));
+		} else {
+			// List all components.
+			query = session.createQuery("FROM Component");
 		}
 		@SuppressWarnings("unchecked")
 		List<Component> components = (List<Component>)query.getResultList();
