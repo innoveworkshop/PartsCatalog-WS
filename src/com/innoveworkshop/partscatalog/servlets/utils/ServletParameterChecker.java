@@ -81,4 +81,63 @@ public class ServletParameterChecker {
 		
 		return true;
 	}
+
+	/**
+	 * Checks if only one of the parameters is set, and it must really be a
+	 * single one only.
+	 * WARNING: This function will send a HTTP error automatically.
+	 * 
+	 * @param  parameters Parameters to be checked.
+	 * @return            True if only one of the parameters is set.
+	 * 
+	 * @throws IOException If something goes wrong when replying to the client.
+	 */
+	public boolean requireOnlyOne(String... parameters) throws IOException {
+		int count = 0;
+		
+		// Go through the parameters checking for their existence.
+		for (String parameter : parameters) {
+			if (request.getParameter(parameter) != null)
+				count++;
+			
+			if (count > 1) {
+				response.sendError(422, "Unprocessable Entity");
+				return false;
+			}
+		}
+		
+		// Check if we at least had a single match.
+		if (count == 0) {
+			response.sendError(422, "Unprocessable Entity");
+			return false;
+		}
+		
+		return true;
+	}
+
+	/**
+	 * Checks if only one of the parameters is set or none at all.
+	 * WARNING: This function will send a HTTP error automatically.
+	 * 
+	 * @param  parameters Parameters to be checked.
+	 * @return            True if only one of the parameters is set or none.
+	 * 
+	 * @throws IOException If something goes wrong when replying to the client.
+	 */
+	public boolean requireOnlyOneOrNone(String... parameters) throws IOException {
+		int count = 0;
+		
+		// Go through the parameters checking for their existence.
+		for (String parameter : parameters) {
+			if (request.getParameter(parameter) != null)
+				count++;
+			
+			if (count > 1) {
+				response.sendError(422, "Unprocessable Entity");
+				return false;
+			}
+		}
+		
+		return true;
+	}
 }
