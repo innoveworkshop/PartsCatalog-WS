@@ -17,5 +17,6 @@ public class Configuration {
 	public static final String IMAGE_DIR = ASSETS_DIR + "/images";
 	public static final String CSS_DIR = ASSETS_DIR + "/css";
 	public static final String JS_DIR = ASSETS_DIR + "/js";
+	public static final String TEMPLATE_JSP_DIR = "";
 	public static final String MANIFEST_FILE = "manifest.json";
 }

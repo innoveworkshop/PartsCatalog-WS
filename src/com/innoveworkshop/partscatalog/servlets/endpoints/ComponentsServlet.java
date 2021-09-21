@@ -21,6 +21,7 @@ import com.innoveworkshop.partscatalog.db.models.SubCategory;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableMessage;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletParameterChecker;
+import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormat;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
 
 /**
@@ -93,7 +94,21 @@ public class ComponentsServlet extends HttpServlet {
 			formatter.respond(components.get(0));
 		} else {
 			// Requested a list of objects.
-			formatter.respond(new FormattableCollection("components", components));
+			if (formatter.getFormat() == ServletResponseFormat.HTML) {
+				// Send some additional objects to render the parametric search.
+				@SuppressWarnings("unchecked")
+				List<Category> categories = (List<Category>)session.createQuery("FROM Category").list();
+				@SuppressWarnings("unchecked")
+				List<SubCategory> subCategories = (List<SubCategory>)session.createQuery("FROM SubCategory").list();
+				@SuppressWarnings("unchecked")
+				List<CaseStyle> caseStyle = (List<CaseStyle>)session.createQuery("FROM CaseStyle").list();
+				
+				request.setAttribute("categories", categories);
+				request.setAttribute("subcategories", subCategories);
+				request.setAttribute("casestyles", caseStyle);
+			}
+			
+			formatter.respond("parametric", new FormattableCollection("components", components));
 		}
 		
 		session.close();

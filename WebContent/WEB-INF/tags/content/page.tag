@@ -20,10 +20,10 @@
 <body>
 	<!-- Header -->
 	<div id="header">
-		<h1>
-			<a href="/">PartsCatalog</a>
-		</h1>
-
+		<a href="/">
+			<h1>PartsCatalog</h1>
+		</a>
+		
 		<div class="menu">
 			<a href="/">Home</a>
 			<a href="/projects">Projects</a>
