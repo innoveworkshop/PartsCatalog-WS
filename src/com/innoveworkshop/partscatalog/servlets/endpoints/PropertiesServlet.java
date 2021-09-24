@@ -28,7 +28,7 @@ import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
  */
 @WebServlet("/property")
 public class PropertiesServlet extends HttpServlet {
-	private static final long serialVersionUID = -3925669235622189733L;
+	private static final long serialVersionUID = 5353104629852682490L;
 	private DatabaseConnection db;
 
 	/**

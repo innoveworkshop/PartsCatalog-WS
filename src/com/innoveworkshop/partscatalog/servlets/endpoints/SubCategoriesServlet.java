@@ -28,7 +28,7 @@ import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
  */
 @WebServlet("/subcategory")
 public class SubCategoriesServlet extends HttpServlet {
-	private static final long serialVersionUID = -3925669235622189733L;
+	private static final long serialVersionUID = 8959639095357662911L;
 	private DatabaseConnection db;
 
 	/**

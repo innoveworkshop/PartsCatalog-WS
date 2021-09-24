@@ -31,7 +31,7 @@ import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
  */
 @WebServlet("/component")
 public class ComponentsServlet extends HttpServlet {
-	private static final long serialVersionUID = -3925669235622189733L;
+	private static final long serialVersionUID = -2373637008679770019L;
 	private DatabaseConnection db;
 
 	/**

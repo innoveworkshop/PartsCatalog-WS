@@ -27,7 +27,7 @@ import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
  */
 @WebServlet("/package")
 public class CaseStyleServlet extends HttpServlet {
-	private static final long serialVersionUID = -3925669235622189733L;
+	private static final long serialVersionUID = 4958084995555632834L;
 	private DatabaseConnection db;
 
 	/**
