@@ -43,7 +43,7 @@ public class SubCategory extends Formattable {
 	private String name;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "parent_id", nullable = true)
+	@JoinColumn(name = "parent_id", nullable = false)
 	private Category parentCategory;
 	
 	/**

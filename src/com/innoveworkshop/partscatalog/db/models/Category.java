@@ -217,7 +217,7 @@ public class Category extends Formattable {
 		headers.add("Name");
 		
 		if (verbose)
-			headers.add("subcategories");
+			headers.add("Sub-Categories");
 		
 		return headers;
 	}
