@@ -112,7 +112,8 @@ public class BOMItemsServlet extends HttpServlet {
 		}
 		
 		// Check for required parameters.
-		if (!paramChecker.requireAll("quantity", "refdes", "component", "project"))
+		if (!paramChecker.requireAll("populate", "quantity", "value", "refdes",
+				"component", "project"))
 			return;
 		
 		// Check if the parent project exists.
@@ -132,7 +133,10 @@ public class BOMItemsServlet extends HttpServlet {
 		}
 		
 		// Update the object and commit changes.
+		bomItem.setPopulate(Boolean.parseBoolean(request.getParameter("populate")) |
+				request.getParameter("populate").equals("1"));
 		bomItem.setQuantity(Integer.parseInt(request.getParameter("quantity")));
+		bomItem.setValue(request.getParameter("value"));
 		bomItem.setRefDes(request.getParameter("refdes"));
 		bomItem.setComponent(component);
 		bomItem.setParentProject(project);

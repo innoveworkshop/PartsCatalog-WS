@@ -43,8 +43,14 @@ public class BOMItem extends Formattable {
 	@Column(name = "quantity")
 	private int quantity;
 	
+	@Column(name = "value")
+	private String value;
+	
 	@Column(name = "refdes")
 	private String refDes;
+	
+	@Column(name = "populate")
+	private boolean populate;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "component_id", nullable = false)
@@ -97,6 +103,24 @@ public class BOMItem extends Formattable {
 	}
 	
 	/**
+	 * Gets the BOM item component value.
+	 * 
+	 * @return BOM item component value.
+	 */
+	public String getValue() {
+		return value;
+	}
+	
+	/**
+	 * Sets the BOM item component value.
+	 * 
+	 * @param value BOM item component value.
+	 */
+	public void setValue(String value) {
+		this.value = value;
+	}
+	
+	/**
 	 * Gets the BOM item reference designators array as a string of
 	 * space-separated values.
 	 * 
@@ -131,6 +155,24 @@ public class BOMItem extends Formattable {
 	 */
 	public String[] getRefDesArray() {
 		return refDes.split(" ");
+	}
+	
+	/**
+	 * Should we populate this component when assembling?
+	 * 
+	 * @return True if we should populate the component.
+	 */
+	public boolean getPopulate() {
+		return populate;
+	}
+	
+	/**
+	 * Sets the assembly population property.
+	 * 
+	 * @param populate Should we populate this component when assembling?
+	 */
+	public void setPopulate(boolean populate) {
+		this.populate = populate;
 	}
 	
 	/**
@@ -186,7 +228,9 @@ public class BOMItem extends Formattable {
 		// Populate the JSON object.
 		json.put("id", id);
 		json.put("quantity", quantity);
+		json.put("value", value);
 		json.put("refdes", new JSONArray(getRefDesArray()));
+		json.put("populate", populate);
 		json.put("component", component.toJSON());
 		
 		// Populate sub-categories in case we actually want it.
@@ -207,11 +251,15 @@ public class BOMItem extends Formattable {
 			Document doc = builder.newDocument();
 			Element root = doc.createElement("item");
 			root.setAttribute("id", String.valueOf(id));
+			root.setAttribute("populate", populate ? "true" : "false");
 			doc.appendChild(root);
 			
 			// Populate the root element.
 			Element child = doc.createElement("quantity");
 			child.setTextContent(String.valueOf(quantity));
+			root.appendChild(child);
+			child = doc.createElement("value");
+			child.setTextContent(value);
 			root.appendChild(child);
 			Node node = doc.importNode(component.toXML(false).getDocumentElement(), true);
 			root.appendChild(node);
@@ -243,16 +291,16 @@ public class BOMItem extends Formattable {
 			// Setup the CSV writer.
 			StringWriter writer = new StringWriter();
 			CSVFormat.Builder builder = CSVFormat.Builder.create(CSVFormat.DEFAULT);
-			builder.setHeader("id", "refdes", "component");
+			builder.setHeader("id", "populate", "value", "refdes", "component");
 			if (verbose)
-				builder.setHeader("id", "refdes", "component", "project");
+				builder.setHeader("id", "populate", "value", "refdes", "component", "project");
 			
 			// Actually build the CSV row.
 			try (CSVPrinter csv = new CSVPrinter(writer, builder.build())) {
 				if (!verbose) {
-					csv.printRecord(id, refDes, component);
+					csv.printRecord(id, populate, value, refDes, component);
 				} else {
-					csv.printRecord(id, refDes, component, parentProject);
+					csv.printRecord(id, populate, value, refDes, component, parentProject);
 				}
 
 				csv.flush();
@@ -275,7 +323,9 @@ public class BOMItem extends Formattable {
 		// Build a more complete text version.
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("ID: " + id + System.lineSeparator());
+		buffer.append("Populate: " + populate + System.lineSeparator());
 		buffer.append("Quantity: " + quantity + System.lineSeparator());
+		buffer.append("Value: " + value + System.lineSeparator());
 		buffer.append("Component: " + component + System.lineSeparator());
 		buffer.append("RefDes: " + refDes + System.lineSeparator());
 		buffer.append("Project: " + parentProject + System.lineSeparator());
@@ -287,7 +337,9 @@ public class BOMItem extends Formattable {
 	public List<String> getTableHeaders(boolean verbose) {
 		ArrayList<String> headers = new ArrayList<String>();
 		headers.add("ID");
+		headers.add("Populate");
 		headers.add("Qnt");
+		headers.add("Value");
 		headers.add("RefDes");
 		headers.add("Component");
 		
@@ -301,7 +353,9 @@ public class BOMItem extends Formattable {
 	public List<String> getTableRow(boolean verbose) {
 		ArrayList<String> columns = new ArrayList<String>();
 		columns.add(String.valueOf(id));
+		columns.add(String.valueOf(populate));
 		columns.add(String.valueOf(quantity));
+		columns.add(value);
 		columns.add(refDes);
 		columns.add(component.toString());
 		
