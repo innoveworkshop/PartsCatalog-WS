@@ -288,9 +288,6 @@ public class Component extends Formattable {
 			json.put("properties", new FormattableCollection("properties",
 					properties).toJSONArray());
 			if (image != null)
-				json.put("image", image.toJSON(true));
-		} else {
-			if (image != null)
 				json.put("image", image.toJSON(false));
 		}
 		
@@ -336,11 +333,6 @@ public class Component extends Formattable {
 				node = doc.importNode(new FormattableCollection("properties",
 						properties).toXML().getDocumentElement(), true);
 				root.appendChild(node);
-				if (image != null) {
-					node = doc.importNode(image.toXML(true).getDocumentElement(), true);
-					root.appendChild(node);
-				}
-			} else {
 				if (image != null) {
 					node = doc.importNode(image.toXML(false).getDocumentElement(), true);
 					root.appendChild(node);

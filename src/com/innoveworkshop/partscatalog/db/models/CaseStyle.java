@@ -125,9 +125,6 @@ public class CaseStyle extends Formattable {
 		// Populate image in case we actually want it.
 		if (verbose) {
 			if (image != null)
-				json.put("image", image.toJSON(true));
-		} else {
-			if (image != null)
 				json.put("image", image.toJSON(false));
 		}
 		
@@ -155,11 +152,6 @@ public class CaseStyle extends Formattable {
 			// Populate properties and image in case we actually want it.
 			Node node;
 			if (verbose) {
-				if (image != null) {
-					node = doc.importNode(image.toXML(true).getDocumentElement(), true);
-					root.appendChild(node);
-				}
-			} else {
 				if (image != null) {
 					node = doc.importNode(image.toXML(false).getDocumentElement(), true);
 					root.appendChild(node);

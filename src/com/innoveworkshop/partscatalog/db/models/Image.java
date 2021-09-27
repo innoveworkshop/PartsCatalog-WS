@@ -1,11 +1,16 @@
 package com.innoveworkshop.partscatalog.db.models;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -37,6 +42,8 @@ import com.innoveworkshop.partscatalog.servlets.utils.Formattable;
 @Entity
 @Table(name = "comp_images")
 public class Image extends Formattable {
+	public static final String DEFAULT_FORMAT = "jpeg";
+	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private int id;
@@ -96,6 +103,33 @@ public class Image extends Formattable {
 	 */
 	public void setImage(byte[] image) {
 		this.image = image;
+	}
+	
+	/**
+	 * Sets the component image file using a {@link BufferedImage} object.
+	 * 
+	 * @param bufImage Image object.
+	 * @throws IOException If something goes wrong while converting.
+	 */
+	public void setImage(BufferedImage bufImage) throws IOException {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ImageIO.write(bufImage, DEFAULT_FORMAT, bos);
+		
+		format = DEFAULT_FORMAT;
+		image = bos.toByteArray();
+	}
+	
+	/**
+	 * Gets the component image file as a {@link BufferedImage} object.
+	 * 
+	 * @return Component image file.
+	 * @throws IOException If something goes wrong while converting.
+	 */
+	public BufferedImage getBufferedImage() throws IOException {
+		InputStream is = new ByteArrayInputStream(image);
+        BufferedImage bufImage = ImageIO.read(is);
+        
+        return bufImage;
 	}
 	
 	/**
@@ -185,6 +219,11 @@ public class Image extends Formattable {
 		
 		return buf.toString();
 	}
+	
+	@Override
+	public String toString() {
+		return "Image #" + id;
+	}
 
 	@Override
 	public JSONObject toJSON(boolean verbose) {
@@ -193,12 +232,13 @@ public class Image extends Formattable {
 		// Populate the JSON object.
 		json.put("id", id);
 		json.put("format", format);
-		json.put("component", (component != null) ? component.toJSON() : JSONObject.NULL);
-		json.put("package", (caseStyle != null) ? caseStyle.toJSON() : JSONObject.NULL);
 		
-		// Append the image as a data URI.
-		if (verbose)
+		// Append the referred objects and image as a data URI.
+		if (verbose) {
+			json.put("component", (component != null) ? component.toJSON(false) : JSONObject.NULL);
+			json.put("package", (caseStyle != null) ? caseStyle.toJSON(false) : JSONObject.NULL);
 			json.put("image", getImageAsDataURI());
+		}
 		
 		return json;
 	}
@@ -220,18 +260,21 @@ public class Image extends Formattable {
 			Element child = doc.createElement("format");
 			child.setTextContent(format);
 			root.appendChild(child);
-			Node node;
-			if (component != null) {
-				node = doc.importNode(component.toXML(false).getDocumentElement(), true);
-				root.appendChild(node);
-			}
-			if (caseStyle != null) {
-				node = doc.importNode(caseStyle.toXML(false).getDocumentElement(), true);
-				root.appendChild(node);
-			}
 			
 			// Append the image contents.
 			if (verbose) {
+				Node node;
+				
+				if (component != null) {
+					node = doc.importNode(component.toXML(false).getDocumentElement(), true);
+					root.appendChild(node);
+				}
+				
+				if (caseStyle != null) {
+					node = doc.importNode(caseStyle.toXML(false).getDocumentElement(), true);
+					root.appendChild(node);
+				}
+				
 				child = doc.createElement("file");
 				child.setAttribute("mimetype", getMimeType());
 				child.setTextContent(getImageAsBase64());
