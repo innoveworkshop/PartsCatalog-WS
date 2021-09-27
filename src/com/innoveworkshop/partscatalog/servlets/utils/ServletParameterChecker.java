@@ -2,8 +2,10 @@ package com.innoveworkshop.partscatalog.servlets.utils;
 
 import java.io.IOException;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 /**
  * A simple class to help servlets check for required, optional, and conditional
@@ -61,6 +63,24 @@ public class ServletParameterChecker {
 		}
 		
 		return true;
+	}
+	
+	/**
+	 * Checks if a multipart form part parameter specified is set.
+	 * WARNING: This function will send a HTTP error automatically.
+	 * 
+	 * @param  parameter Multipart part form parameter to be checked.
+	 * @return           True if the parameter is present.
+	 * 
+	 * @throws IOException       If something goes wrong when replying to the client.
+	 * @throws ServletException  If something goes wrong while parting the part.
+	 */
+	public Part requirePart(String parameter) throws IOException, ServletException {
+		Part part = request.getPart(parameter);
+		if (part == null)
+			response.sendError(422, "Unprocessable Entity");
+		
+		return part;
 	}
 	
 	/**
