@@ -12,9 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Session;
 
-import com.innoveworkshop.partscatalog.config.Configuration;
-import com.innoveworkshop.partscatalog.db.DatabaseConnection;
 import com.innoveworkshop.partscatalog.db.models.Category;
+import com.innoveworkshop.partscatalog.servlets.utils.DatabaseHttpServlet;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableMessage;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletParameterChecker;
@@ -26,27 +25,19 @@ import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 @WebServlet("/category")
-public class CategoriesServlet extends HttpServlet {
+public class CategoriesServlet extends DatabaseHttpServlet {
 	private static final long serialVersionUID = 1947590770905577729L;
-	private DatabaseConnection db;
 
 	/**
      * @see HttpServlet#HttpServlet()
      */
     public CategoriesServlet() {
         super();
-        
-		// Connect to the database and open a new session.
-		db = new DatabaseConnection(Configuration.DB_MODELS_PACKAGE);
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	@SuppressWarnings("unchecked")
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Session session = db.openSession();
-
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response,
+			Session session) throws ServletException, IOException {
 		Query query;
 		if (request.getParameter("id") == null) {
 			// List all categories.
@@ -56,6 +47,7 @@ public class CategoriesServlet extends HttpServlet {
 			query = session.createQuery("FROM Category WHERE id = :id");
 			query.setParameter("id", Integer.parseInt(request.getParameter("id")));
 		}
+		@SuppressWarnings("unchecked")
 		List<Category> categories = (List<Category>)query.getResultList();
 		
 		// Setup the response formatter.
@@ -75,13 +67,11 @@ public class CategoriesServlet extends HttpServlet {
 			// Requested a list of objects.
 			formatter.respond(new FormattableCollection("categories", categories));
 		}
-		
-		session.close();
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Session session = db.openSession();
+	protected void doPost(HttpServletRequest request, HttpServletResponse response,
+			Session session) throws ServletException, IOException {
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		Category category = null;
 
@@ -114,14 +104,11 @@ public class CategoriesServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(category);
-		
-		session.close();
 	}
 
 	@Override
-	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Session session = db.openSession();
-		
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response,
+			Session session) throws ServletException, IOException {
 		// Check if we have the required ID parameter.
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		if (!paramChecker.require("id"))
@@ -143,7 +130,5 @@ public class CategoriesServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(new FormattableMessage("Deleted successfully"));
-		
-		session.close();
 	}
 }

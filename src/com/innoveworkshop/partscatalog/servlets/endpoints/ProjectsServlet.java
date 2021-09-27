@@ -12,9 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Session;
 
-import com.innoveworkshop.partscatalog.config.Configuration;
-import com.innoveworkshop.partscatalog.db.DatabaseConnection;
 import com.innoveworkshop.partscatalog.db.models.Project;
+import com.innoveworkshop.partscatalog.servlets.utils.DatabaseHttpServlet;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableMessage;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletParameterChecker;
@@ -26,27 +25,19 @@ import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 @WebServlet("/project")
-public class ProjectsServlet extends HttpServlet {
+public class ProjectsServlet extends DatabaseHttpServlet {
 	private static final long serialVersionUID = -4044927344389549790L;
-	private DatabaseConnection db;
 
 	/**
      * @see HttpServlet#HttpServlet()
      */
     public ProjectsServlet() {
         super();
-        
-		// Connect to the database and open a new session.
-		db = new DatabaseConnection(Configuration.DB_MODELS_PACKAGE);
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	@SuppressWarnings("unchecked")
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Session session = db.openSession();
-
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response,
+			Session session) throws ServletException, IOException {
 		Query query;
 		if (request.getParameter("id") == null) {
 			// List all projects.
@@ -56,6 +47,7 @@ public class ProjectsServlet extends HttpServlet {
 			query = session.createQuery("FROM Project WHERE id = :id");
 			query.setParameter("id", Integer.parseInt(request.getParameter("id")));
 		}
+		@SuppressWarnings("unchecked")
 		List<Project> projects = (List<Project>)query.getResultList();
 		
 		// Setup the response formatter.
@@ -75,13 +67,11 @@ public class ProjectsServlet extends HttpServlet {
 			// Requested a list of objects.
 			formatter.respond(new FormattableCollection("projects", projects));
 		}
-		
-		session.close();
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Session session = db.openSession();
+	protected void doPost(HttpServletRequest request, HttpServletResponse response,
+			Session session) throws ServletException, IOException {
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		Project project = null;
 
@@ -116,14 +106,11 @@ public class ProjectsServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(project);
-		
-		session.close();
 	}
 
 	@Override
-	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Session session = db.openSession();
-		
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response,
+			Session session) throws ServletException, IOException {
 		// Check if we have the required ID parameter.
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		if (!paramChecker.require("id"))
@@ -145,7 +132,5 @@ public class ProjectsServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(new FormattableMessage("Deleted successfully"));
-		
-		session.close();
 	}
 }

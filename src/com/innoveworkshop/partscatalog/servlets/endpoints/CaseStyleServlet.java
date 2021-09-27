@@ -12,9 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Session;
 
-import com.innoveworkshop.partscatalog.config.Configuration;
-import com.innoveworkshop.partscatalog.db.DatabaseConnection;
 import com.innoveworkshop.partscatalog.db.models.CaseStyle;
+import com.innoveworkshop.partscatalog.servlets.utils.DatabaseHttpServlet;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableMessage;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletParameterChecker;
@@ -26,26 +25,19 @@ import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 @WebServlet("/package")
-public class CaseStyleServlet extends HttpServlet {
+public class CaseStyleServlet extends DatabaseHttpServlet {
 	private static final long serialVersionUID = 4958084995555632834L;
-	private DatabaseConnection db;
-
+	
 	/**
      * @see HttpServlet#HttpServlet()
      */
     public CaseStyleServlet() {
         super();
-        
-		// Connect to the database and open a new session.
-		db = new DatabaseConnection(Configuration.DB_MODELS_PACKAGE);
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Session session = db.openSession();
-		
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response,
+			Session session) throws ServletException, IOException {
 		Query query;
 		if (request.getParameter("id") == null) {
 			// List all packages.
@@ -75,13 +67,11 @@ public class CaseStyleServlet extends HttpServlet {
 			// Requested a list of objects.
 			formatter.respond(new FormattableCollection("packages", packages));
 		}
-		
-		session.close();
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Session session = db.openSession();
+	protected void doPost(HttpServletRequest request, HttpServletResponse response,
+			Session session) throws ServletException, IOException {
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		CaseStyle caseStyle = null;
 
@@ -114,14 +104,11 @@ public class CaseStyleServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(caseStyle);
-		
-		session.close();
 	}
 
 	@Override
-	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Session session = db.openSession();
-		
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response,
+			Session session) throws ServletException, IOException {
 		// Check if we have the required ID parameter.
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		if (!paramChecker.require("id"))
@@ -143,7 +130,5 @@ public class CaseStyleServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(new FormattableMessage("Deleted successfully"));
-		
-		session.close();
 	}
 }

@@ -12,11 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Session;
 
-import com.innoveworkshop.partscatalog.config.Configuration;
-import com.innoveworkshop.partscatalog.db.DatabaseConnection;
 import com.innoveworkshop.partscatalog.db.models.BOMItem;
 import com.innoveworkshop.partscatalog.db.models.Component;
 import com.innoveworkshop.partscatalog.db.models.Project;
+import com.innoveworkshop.partscatalog.servlets.utils.DatabaseHttpServlet;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableMessage;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletParameterChecker;
@@ -28,25 +27,19 @@ import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 @WebServlet("/bom_item")
-public class BOMItemsServlet extends HttpServlet {
+public class BOMItemsServlet extends DatabaseHttpServlet {
 	private static final long serialVersionUID = -4390161405257106151L;
-	private DatabaseConnection db;
 
 	/**
      * @see HttpServlet#HttpServlet()
      */
     public BOMItemsServlet() {
         super();
-        
-		// Connect to the database and open a new session.
-		db = new DatabaseConnection(Configuration.DB_MODELS_PACKAGE);
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Session session = db.openSession();
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response,
+			Session session) throws ServletException, IOException {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		
 		// Check if we have the required parent project XOR ID parameter.
@@ -85,13 +78,11 @@ public class BOMItemsServlet extends HttpServlet {
 			// Requested a list of objects.
 			formatter.respond(new FormattableCollection("bom", bomItems));
 		}
-		
-		session.close();
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Session session = db.openSession();
+	protected void doPost(HttpServletRequest request, HttpServletResponse response,
+			Session session) throws ServletException, IOException {
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		BOMItem bomItem = null;
 
@@ -147,14 +138,11 @@ public class BOMItemsServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(bomItem);
-		
-		session.close();
 	}
 
 	@Override
-	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Session session = db.openSession();
-		
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response,
+			Session session) throws ServletException, IOException {
 		// Check if we have the required ID parameter.
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		if (!paramChecker.require("id"))
@@ -176,7 +164,5 @@ public class BOMItemsServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(new FormattableMessage("Deleted successfully"));
-		
-		session.close();
 	}
 }

@@ -10,18 +10,16 @@ import javax.persistence.Query;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import org.hibernate.Session;
 
-import com.innoveworkshop.partscatalog.config.Configuration;
-import com.innoveworkshop.partscatalog.db.DatabaseConnection;
 import com.innoveworkshop.partscatalog.db.models.CaseStyle;
 import com.innoveworkshop.partscatalog.db.models.Component;
 import com.innoveworkshop.partscatalog.db.models.Image;
+import com.innoveworkshop.partscatalog.servlets.utils.DatabaseHttpServlet;
 import com.innoveworkshop.partscatalog.servlets.utils.FormattableMessage;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletParameterChecker;
 import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
@@ -33,25 +31,19 @@ import com.innoveworkshop.partscatalog.servlets.utils.ServletResponseFormatter;
  */
 @WebServlet("/image")
 @MultipartConfig
-public class ImagesServlet extends HttpServlet {
+public class ImagesServlet extends DatabaseHttpServlet {
 	private static final long serialVersionUID = 3454758453402757114L;
-	private DatabaseConnection db;
 
 	/**
-     * @see HttpServlet#HttpServlet()
+     * @see DatabaseHttpServlet#HttpServlet()
      */
     public ImagesServlet() {
-        super();
-        
-		// Connect to the database and open a new session.
-		db = new DatabaseConnection(Configuration.DB_MODELS_PACKAGE);
+    	super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Session session = db.openSession();
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response,
+			Session session) throws ServletException, IOException {
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		
 		// Check if we want a specific image or a component/package image.
@@ -110,13 +102,11 @@ public class ImagesServlet extends HttpServlet {
 			formatter.setVerbose(true);
 			formatter.respond(images.get(0));
 		}
-
-		session.close();
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Session session = db.openSession();
+	protected void doPost(HttpServletRequest request, HttpServletResponse response,
+			Session session) throws ServletException, IOException {
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		Image image = null;
 
@@ -182,14 +172,11 @@ public class ImagesServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(image);
-		
-		session.close();
 	}
 
 	@Override
-	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Session session = db.openSession();
-		
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response,
+			Session session) throws ServletException, IOException {
 		// Check if we have the required ID parameter.
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
 		if (!paramChecker.require("id"))
@@ -211,7 +198,5 @@ public class ImagesServlet extends HttpServlet {
 		ServletResponseFormatter formatter = new ServletResponseFormatter(request, response);
 		formatter.setVerbose(true);
 		formatter.respond(new FormattableMessage("Deleted successfully"));
-		
-		session.close();
 	}
 }
