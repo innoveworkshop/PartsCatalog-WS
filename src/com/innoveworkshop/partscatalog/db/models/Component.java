@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -66,6 +67,9 @@ public class Component extends Formattable {
 	
 	@OneToMany(mappedBy = "component", fetch = FetchType.LAZY)
 	private Set<Property> properties;
+	
+	@OneToOne(mappedBy = "component", fetch = FetchType.LAZY)
+	private Image image;
 	
 	/**
 	 * Component category empty constructor.
@@ -238,6 +242,24 @@ public class Component extends Formattable {
 	}
 	
 	/**
+	 * Gets the component image.
+	 * 
+	 * @return Component image.
+	 */
+	public Image getImage() {
+		return image;
+	}
+	
+	/**
+	 * Sets the component image.
+	 * 
+	 * @param image Component image.
+	 */
+	public void setImage(Image image) {
+		this.image = image;
+	}
+	
+	/**
 	 * String representation of this object.
 	 * 
 	 * @return Component name.
@@ -261,10 +283,16 @@ public class Component extends Formattable {
 		json.put("package", caseStyle != null ? caseStyle.toJSON(false) :
 			JSONObject.NULL);
 		
-		// Populate sub-categories in case we actually want it.
-		if (verbose)
+		// Populate properties in case we actually want it.
+		if (verbose) {
 			json.put("properties", new FormattableCollection("properties",
 					properties).toJSONArray());
+			if (image != null)
+				json.put("image", image.toJSON(true));
+		} else {
+			if (image != null)
+				json.put("image", image.toJSON(false));
+		}
 		
 		return json;
 	}
@@ -303,11 +331,20 @@ public class Component extends Formattable {
 				root.appendChild(node);
 			}
 			
-			// Populate sub-categories in case we actually want it.
+			// Populate properties in case we actually want it.
 			if (verbose) {
 				node = doc.importNode(new FormattableCollection("properties",
 						properties).toXML().getDocumentElement(), true);
 				root.appendChild(node);
+				if (image != null) {
+					node = doc.importNode(image.toXML(true).getDocumentElement(), true);
+					root.appendChild(node);
+				}
+			} else {
+				if (image != null) {
+					node = doc.importNode(image.toXML(false).getDocumentElement(), true);
+					root.appendChild(node);
+				}
 			}
 			
 			return doc;
