@@ -283,7 +283,7 @@ public class Component extends Formattable {
 		json.put("package", caseStyle != null ? caseStyle.toJSON(false) :
 			JSONObject.NULL);
 		
-		// Populate properties in case we actually want it.
+		// Populate properties and image in case we actually want it.
 		if (verbose) {
 			json.put("properties", new FormattableCollection("properties",
 					properties).toJSONArray());
@@ -331,7 +331,7 @@ public class Component extends Formattable {
 				root.appendChild(node);
 			}
 			
-			// Populate properties in case we actually want it.
+			// Populate properties and image in case we actually want it.
 			if (verbose) {
 				node = doc.importNode(new FormattableCollection("properties",
 						properties).toXML().getDocumentElement(), true);

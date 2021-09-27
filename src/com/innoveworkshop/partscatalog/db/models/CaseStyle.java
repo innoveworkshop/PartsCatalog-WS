@@ -7,9 +7,11 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,6 +22,7 @@ import org.apache.commons.csv.CSVPrinter;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.innoveworkshop.partscatalog.servlets.utils.Formattable;
 
@@ -37,6 +40,9 @@ public class CaseStyle extends Formattable {
 	
 	@Column(name = "name")
 	private String name;
+	
+	@OneToOne(mappedBy = "caseStyle", fetch = FetchType.LAZY)
+	private Image image;
 	
 	/**
 	 * Component package empty constructor.
@@ -81,6 +87,24 @@ public class CaseStyle extends Formattable {
 	}
 	
 	/**
+	 * Gets the package image.
+	 * 
+	 * @return Package image.
+	 */
+	public Image getImage() {
+		return image;
+	}
+	
+	/**
+	 * Sets the package image.
+	 * 
+	 * @param image Package image.
+	 */
+	public void setImage(Image image) {
+		this.image = image;
+	}
+	
+	/**
 	 * String representation of this object.
 	 * 
 	 * @return Package name.
@@ -97,6 +121,15 @@ public class CaseStyle extends Formattable {
 		// Populate the JSON object.
 		json.put("id", id);
 		json.put("name", name);
+		
+		// Populate image in case we actually want it.
+		if (verbose) {
+			if (image != null)
+				json.put("image", image.toJSON(true));
+		} else {
+			if (image != null)
+				json.put("image", image.toJSON(false));
+		}
 		
 		return json;
 	}
@@ -118,6 +151,20 @@ public class CaseStyle extends Formattable {
 			Element child = doc.createElement("name");
 			child.setTextContent(name);
 			root.appendChild(child);
+			
+			// Populate properties and image in case we actually want it.
+			Node node;
+			if (verbose) {
+				if (image != null) {
+					node = doc.importNode(image.toXML(true).getDocumentElement(), true);
+					root.appendChild(node);
+				}
+			} else {
+				if (image != null) {
+					node = doc.importNode(image.toXML(false).getDocumentElement(), true);
+					root.appendChild(node);
+				}
+			}
 			
 			return doc;
 		} catch (ParserConfigurationException e) {
