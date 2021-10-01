@@ -34,6 +34,11 @@
   	<url>https://github.com/innoveworkshop/PartsCatalog-WS.git</url>
   </scm>
   <dependencies>
+    <dependency>
+  		<groupId>org.apache.tomcat</groupId>
+  		<artifactId>tomcat-catalina</artifactId>
+  		<version>9.0.53</version>
+  	</dependency>
   	<dependency>
   		<groupId>mysql</groupId>
   		<artifactId>mysql-connector-java</artifactId>
@@ -78,6 +83,11 @@
   		<groupId>org.tuckey</groupId>
   		<artifactId>urlrewritefilter</artifactId>
   		<version>4.0.4</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.apache.tomcat</groupId>
+  		<artifactId>tomcat-jsp-api</artifactId>
+  		<version>9.0.53</version>
   	</dependency>
   </dependencies>
 </project>
