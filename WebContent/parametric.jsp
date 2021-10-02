@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="com.innoveworkshop.partscatalog.config.Configuration" %>
 <%@ taglib prefix="content" tagdir="/WEB-INF/tags/content" %>
+<%@ taglib prefix="partcat" tagdir="/WEB-INF/tags/partcat" %>
 
 <content:page>
 	<!-- Parametric Search -->
@@ -90,53 +91,7 @@
 		</thead>
 		<tbody>
 			<c:forEach var="component" items="${object.collection}">
-				<tr id="row-${component.ID}">
-					<td align="center"><input type="checkbox"></td>
-					<td align="center">
-						<!-- if ($component->has_datasheet) { -->
-							<a href="/datasheet/datasheet.pdf">
-								<content:image src="/icons/datasheet.png"
-										classes="datasheet-image" border="0">
-									Datasheet
-								</content:image>
-							</a>
-						<!-- endif -->
-					</td>
-					<td align="center">
-						<!-- if ($component->has_image) { -->
-							<a href="/component/${component.ID}">
-								<content:image src="/component/image/none.jpg"
-										classes="comp-image" border="0">
-									Image
-								</content:image>
-							</a>
-						<!-- endif -->
-					</td>
-					<td align="center">
-						<a href="/component/${component.ID}">${component.name}</a>
-					</td>
-					<td>${component.description}</td>
-					<td align="center">${component.quantity}</td>
-					<td align="center">
-						<a href="/category/${component.category.ID}">
-							${component.category.name}
-						</a>
-					</td>
-					<td align="center">
-						<c:if test="${component.subCategory != null}">
-							<a href="/subcategory/${component.subCategory.ID}">
-								${component.subCategory.name}
-							</a>
-						</c:if>
-					</td>
-					<td align="center">
-						<c:if test="${component.caseStyle != null}">
-							<a href="/package/${component.caseStyle.ID}">
-								${component.caseStyle.name}
-							</a>
-						</c:if>
-					</td>
-				</tr>
+				<partcat:paramrow component="${component}"></partcat:paramrow>
 			</c:forEach>
 		</tbody>
 	</table>

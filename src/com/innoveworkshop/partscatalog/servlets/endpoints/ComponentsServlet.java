@@ -83,7 +83,7 @@ public class ComponentsServlet extends DatabaseHttpServlet {
 				return;
 			}
 			
-			formatter.respond(components.get(0));
+			formatter.respond("component", components.get(0));
 		} else {
 			// Requested a list of objects.
 			if (formatter.getFormat() == ServletResponseFormat.HTML) {
