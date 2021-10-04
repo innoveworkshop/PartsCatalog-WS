@@ -71,6 +71,9 @@ public class Component extends Formattable {
 	@OneToOne(mappedBy = "component", fetch = FetchType.LAZY)
 	private Image image;
 	
+	@OneToOne(mappedBy = "component", fetch = FetchType.LAZY)
+	private Datasheet datasheet;
+	
 	/**
 	 * Component category empty constructor.
 	 */
@@ -260,6 +263,24 @@ public class Component extends Formattable {
 	}
 	
 	/**
+	 * Gets the component datasheet.
+	 * 
+	 * @return Component datasheet.
+	 */
+	public Datasheet getDatasheet() {
+		return datasheet;
+	}
+	
+	/**
+	 * Sets the component datasheet.
+	 * 
+	 * @param datasheet Component datasheet.
+	 */
+	public void setDatasheet(Datasheet datasheet) {
+		this.datasheet = datasheet;
+	}
+	
+	/**
 	 * String representation of this object.
 	 * 
 	 * @return Component name.
@@ -283,12 +304,19 @@ public class Component extends Formattable {
 		json.put("package", caseStyle != null ? caseStyle.toJSON(false) :
 			JSONObject.NULL);
 		
-		// Populate properties and image in case we actually want it.
+		// Populate properties, image, and datasheet in case we actually want it.
 		if (verbose) {
+			// Properties
 			json.put("properties", new FormattableCollection("properties",
 					properties).toJSONArray());
+			
+			// Image
 			if (image != null)
 				json.put("image", image.toJSON(false));
+			
+			// Datasheet
+			if (datasheet != null)
+				json.put("datasheet", datasheet.toJSON(false));
 		}
 		
 		return json;
@@ -328,13 +356,22 @@ public class Component extends Formattable {
 				root.appendChild(node);
 			}
 			
-			// Populate properties and image in case we actually want it.
+			// Populate properties, image, and datasheet in case we actually want it.
 			if (verbose) {
+				// Properties
 				node = doc.importNode(new FormattableCollection("properties",
 						properties).toXML().getDocumentElement(), true);
 				root.appendChild(node);
+				
+				// Image
 				if (image != null) {
 					node = doc.importNode(image.toXML(false).getDocumentElement(), true);
+					root.appendChild(node);
+				}
+				
+				// Datasheet
+				if (datasheet != null) {
+					node = doc.importNode(datasheet.toXML(false).getDocumentElement(), true);
 					root.appendChild(node);
 				}
 			}

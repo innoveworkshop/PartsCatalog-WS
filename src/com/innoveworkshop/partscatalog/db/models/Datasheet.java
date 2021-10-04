@@ -136,7 +136,7 @@ public class Datasheet extends Formattable {
 
 			// Create the root element.
 			Document doc = builder.newDocument();
-			Element root = doc.createElement("image");
+			Element root = doc.createElement("datasheet");
 			root.setAttribute("id", String.valueOf(id));
 			doc.appendChild(root);
 			
