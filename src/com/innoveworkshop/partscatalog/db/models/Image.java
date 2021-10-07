@@ -49,7 +49,7 @@ public class Image extends Formattable {
 	private int id;
 	
 	@Lob
-	@Column(name = "image", nullable = false, columnDefinition = "mediumblob")
+	@Column(name = "image", nullable = false, columnDefinition = "VARBINARY")
 	private byte[] image;
 	
 	@Column(name = "format")

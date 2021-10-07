@@ -94,7 +94,6 @@ public class ImagesServlet extends DatabaseHttpServlet {
 			
 			// Respond with the image in the desired format.
 			response.setContentType(mimeType);
-			response.setContentLength(images.get(0).getImage().length);
 			ImageIO.write(images.get(0).getBufferedImage(), request.getParameter("format"), out);
 			out.close();
 		} else {

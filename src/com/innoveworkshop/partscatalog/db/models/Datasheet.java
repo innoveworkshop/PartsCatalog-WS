@@ -41,7 +41,7 @@ public class Datasheet extends Formattable {
 	private int id;
 	
 	@Lob
-	@Column(name = "file", nullable = false, columnDefinition = "longblob")
+	@Column(name = "contents", nullable = false, columnDefinition = "VARBINARY")
 	private byte[] file;
 	
 	@OneToOne(fetch = FetchType.LAZY)
