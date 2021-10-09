@@ -33,20 +33,20 @@ import com.innoveworkshop.partscatalog.servlets.utils.Formattable;
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 @Entity
-@Table(name = "comp_properties")
+@Table(name = "Properties")
 public class Property extends Formattable {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
+	@Column(name = "PropertyID")
 	private int id;
 	
-	@Column(name = "name")
+	@Column(name = "Name")
 	private String name;
 	
-	@Column(name = "value")
+	@Column(name = "Value")
 	private String value;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "component_id", nullable = false)
+	@JoinColumn(name = "ComponentID", nullable = false)
 	private Component component;
 	
 	/**

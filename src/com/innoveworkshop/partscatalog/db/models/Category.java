@@ -35,13 +35,13 @@ import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 @Entity
-@Table(name = "comp_categories")
+@Table(name = "Categories")
 public class Category extends Formattable {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
+	@Column(name = "CategoryID")
 	private int id;
 	
-	@Column(name = "name")
+	@Column(name = "Name")
 	private String name;
 	
 	@ManyToMany(mappedBy = "parentCategory", fetch = FetchType.LAZY)

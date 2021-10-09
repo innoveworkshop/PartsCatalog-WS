@@ -38,39 +38,39 @@ import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 @Entity
-@Table(name = "components")
+@Table(name = "Components")
 public class Component extends Formattable {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
+	@Column(name = "ComponentID")
 	private int id;
 	
-	@Column(name = "name")
+	@Column(name = "Name")
 	private String name;
 	
-	@Column(name = "quantity")
+	@Column(name = "Quantity")
 	private int quantity;
 	
-	@Column(name = "description")
+	@Column(name = "Description")
 	private String description;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "category_id", nullable = false)
+	@JoinColumn(name = "CategoryID", nullable = false)
 	private Category category;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "subcategory_id", nullable = false)
+	@JoinColumn(name = "SubCategoryID", nullable = false)
 	private SubCategory subCategory;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "package_id", nullable = false)
+	@JoinColumn(name = "PackageID", nullable = false)
 	private CaseStyle caseStyle;
 	
 	@OneToMany(mappedBy = "component", fetch = FetchType.LAZY)
 	private Set<Property> properties;
-	
+
 	@OneToOne(mappedBy = "component", fetch = FetchType.LAZY)
 	private Image image;
-	
+
 	@OneToOne(mappedBy = "component", fetch = FetchType.LAZY)
 	private Datasheet datasheet;
 	

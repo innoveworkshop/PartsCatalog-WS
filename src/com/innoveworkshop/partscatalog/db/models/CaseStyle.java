@@ -32,15 +32,15 @@ import com.innoveworkshop.partscatalog.servlets.utils.Formattable;
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 @Entity
-@Table(name = "comp_packages")
+@Table(name = "Packages")
 public class CaseStyle extends Formattable {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
+	@Column(name = "PackageID")
 	private int id;
 	
-	@Column(name = "name")
+	@Column(name = "Name")
 	private String name;
-	
+
 	@OneToOne(mappedBy = "caseStyle", fetch = FetchType.LAZY)
 	private Image image;
 	

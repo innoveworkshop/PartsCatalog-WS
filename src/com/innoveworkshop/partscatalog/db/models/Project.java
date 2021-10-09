@@ -34,19 +34,19 @@ import com.innoveworkshop.partscatalog.servlets.utils.FormattableCollection;
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 @Entity
-@Table(name = "projects")
+@Table(name = "Projects")
 public class Project extends Formattable {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
+	@Column(name = "ProjectID")
 	private int id;
 	
-	@Column(name = "name")
+	@Column(name = "Name")
 	private String name;
 	
-	@Column(name = "revision")
+	@Column(name = "Revision")
 	private String revision;
 	
-	@Column(name = "description")
+	@Column(name = "Description")
 	private String description;
 	
 	@ManyToMany(mappedBy = "parentProject", fetch = FetchType.LAZY)

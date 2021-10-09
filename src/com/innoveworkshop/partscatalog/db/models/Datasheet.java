@@ -34,18 +34,18 @@ import com.innoveworkshop.partscatalog.servlets.utils.Formattable;
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 @Entity
-@Table(name = "datasheets")
+@Table(name = "Datasheets")
 public class Datasheet extends Formattable {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
+	@Column(name = "DatasheetID")
 	private int id;
 	
 	@Lob
-	@Column(name = "contents", nullable = false, columnDefinition = "VARBINARY")
+	@Column(name = "FileContent", nullable = false, columnDefinition = "VARBINARY")
 	private byte[] file;
 	
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "component_id", nullable = true)
+	@JoinColumn(name = "ComponentID", nullable = false)
 	private Component component;
 	
 	/**

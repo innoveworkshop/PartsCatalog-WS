@@ -34,30 +34,30 @@ import com.innoveworkshop.partscatalog.servlets.utils.Formattable;
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 @Entity
-@Table(name = "bom_components")
+@Table(name = "BillOfMaterialsItems")
 public class BOMItem extends Formattable {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
+	@Column(name = "ItemID")
 	private int id;
 	
-	@Column(name = "quantity")
+	@Column(name = "Quantity")
 	private int quantity;
 	
-	@Column(name = "value")
+	@Column(name = "Value")
 	private String value;
 	
-	@Column(name = "refdes")
+	@Column(name = "RefDes")
 	private String refDes;
 	
-	@Column(name = "populate")
+	@Column(name = "Populate")
 	private boolean populate;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "component_id", nullable = false)
+	@JoinColumn(name = "ComponentID", nullable = false)
 	private Component component;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "project_id", nullable = false)
+	@JoinColumn(name = "ProjectID", nullable = false)
 	private Project parentProject;
 	
 	/**

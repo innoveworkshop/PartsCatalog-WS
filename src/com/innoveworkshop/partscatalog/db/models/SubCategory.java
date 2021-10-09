@@ -33,17 +33,17 @@ import com.innoveworkshop.partscatalog.servlets.utils.Formattable;
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 @Entity
-@Table(name = "comp_subcategories")
+@Table(name = "SubCategories")
 public class SubCategory extends Formattable {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
+	@Column(name = "SubCategoryID")
 	private int id;
 	
-	@Column(name = "name")
+	@Column(name = "Name")
 	private String name;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "parent_id", nullable = false)
+	@JoinColumn(name = "ParentID", nullable = false)
 	private Category parentCategory;
 	
 	/**

@@ -40,27 +40,27 @@ import com.innoveworkshop.partscatalog.servlets.utils.Formattable;
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 @Entity
-@Table(name = "comp_images")
+@Table(name = "Images")
 public class Image extends Formattable {
 	public static final String DEFAULT_FORMAT = "jpeg";
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
+	@Column(name = "ImageID")
 	private int id;
 	
 	@Lob
-	@Column(name = "image", nullable = false, columnDefinition = "VARBINARY")
+	@Column(name = "FileContent", nullable = false, columnDefinition = "VARBINARY")
 	private byte[] image;
 	
-	@Column(name = "format")
+	@Column(name = "Format")
 	private String format;
 	
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "component_id", nullable = true)
+	@JoinColumn(name = "ComponentID", nullable = true)
 	private Component component;
 	
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "package_id", nullable = true)
+	@JoinColumn(name = "PackageID", nullable = true)
 	private CaseStyle caseStyle;
 	
 	/**
