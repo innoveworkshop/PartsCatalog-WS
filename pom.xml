@@ -2,7 +2,6 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.innoveworkshop.partscatalog</groupId>
   <artifactId>partscatalog</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>PartsCatalog</name>
   <description>A simple web service to browse through your parts bins</description>
@@ -34,11 +33,6 @@
   	<url>https://github.com/innoveworkshop/PartsCatalog-WS.git</url>
   </scm>
   <dependencies>
-    <dependency>
-  		<groupId>org.apache.tomcat</groupId>
-  		<artifactId>tomcat-catalina</artifactId>
-  		<version>9.0.53</version>
-  	</dependency>
   	<dependency>
   		<groupId>org.hibernate</groupId>
   		<artifactId>hibernate-core</artifactId>
@@ -80,14 +74,10 @@
   		<version>4.0.4</version>
   	</dependency>
   	<dependency>
-  		<groupId>org.apache.tomcat</groupId>
-  		<artifactId>tomcat-jsp-api</artifactId>
-  		<version>9.0.53</version>
-  	</dependency>
-  	<dependency>
   		<groupId>com.microsoft.sqlserver</groupId>
   		<artifactId>mssql-jdbc</artifactId>
   		<version>9.4.0.jre11</version>
   	</dependency>
   </dependencies>
+  <version>1.0.0</version>
 </project>
