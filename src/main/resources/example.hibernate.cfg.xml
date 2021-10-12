@@ -15,7 +15,7 @@
 		<property name="hibernate.connection.url">
 			jdbc:sqlserver://localhost;databaseName=PartsCatalog
 		</property>
-		<property name="hibernate.connection.username">username</property>
+		<property name="hibernate.connection.username">partscatalog</property>
 		<property name="hibernate.connection.password">password</property>
 	</session-factory>
 </hibernate-configuration>

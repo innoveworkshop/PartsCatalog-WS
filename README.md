@@ -28,6 +28,12 @@ The first thing you'll need to do is to create a `hibernate.cfg.xml` file
 in `src/main/resources` directory using the provided
 `example.hibernate.cfg.xml` file with your SQL Server information.
 
+Next up is the actual database configuration. This can be done by opening the
+[SQL Server Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15)
+and importing the `sql/Initialize.sql` file into your instance which will
+create the database and its associated tables, but also the `partscatalog`
+for use by the web application.
+
 Now you're ready to deploy the project to the server!
 
 ### Deployment
