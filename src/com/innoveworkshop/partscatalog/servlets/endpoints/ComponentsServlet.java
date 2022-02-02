@@ -44,7 +44,7 @@ public class ComponentsServlet extends DatabaseHttpServlet {
 			Session session) throws ServletException, IOException {
 		// Check if we have the required parent category XOR ID parameter.
 		ServletParameterChecker paramChecker = new ServletParameterChecker(request, response);
-		if (!paramChecker.requireOnlyOneOrNone("id", "category", "subcategory", "package"))
+		if (!paramChecker.requireOnlyOneOrNone("id", "name", "category", "subcategory", "package"))
 			return;
 		
 		Query query;
@@ -52,6 +52,10 @@ public class ComponentsServlet extends DatabaseHttpServlet {
 			// Get a single component.
 			query = session.createQuery("FROM Component WHERE id = :id");
 			query.setParameter("id", Integer.parseInt(request.getParameter("id")));
+		} else if (request.getParameter("name") != null) {
+			// Get a single component from a name.
+			query = session.createQuery("FROM Component WHERE name = :name");
+			query.setParameter("name", request.getParameter("name"));
 		} else if (request.getParameter("category") != null) {
 			// List components from a category.
 			query = session.createQuery("FROM Component WHERE category.id = :category");
@@ -76,7 +80,7 @@ public class ComponentsServlet extends DatabaseHttpServlet {
 		formatter.setVerbose(true);
 		
 		// Respond to the request.
-		if (request.getParameter("id") != null) {
+		if ((request.getParameter("id") != null) || (request.getParameter("name") != null)) {
 			// Requested only a single object.
 			if (components.isEmpty()) {
 				response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -84,7 +88,7 @@ public class ComponentsServlet extends DatabaseHttpServlet {
 			}
 			
 			formatter.respond("component", components.get(0));
-		} else {
+		}  else {
 			// Requested a list of objects.
 			if (formatter.getFormat() == ServletResponseFormat.HTML) {
 				// Send some additional objects to render the parametric search.
