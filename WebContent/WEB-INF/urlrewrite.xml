@@ -2,31 +2,37 @@
 <urlrewrite>
 	<!-- Image by ID. -->
 	<rule>
-		<from>/image/([0-9]+).([A-Za-z0-9]+)$</from>
+		<from>/image/([0-9]+)\.([A-Za-z0-9]+)$</from>
 		<to>/image?id=$1&amp;format=$2&amp;download=1</to>
+	</rule>
+	
+	<!-- Component detail. -->
+	<rule>
+		<from>/component/([0-9]+)$</from>
+		<to>/component?id=$1&amp;format=html</to>
 	</rule>
 	
 	<!-- Component image. -->
 	<rule>
-		<from>/component/image/([0-9]+).([A-Za-z0-9]+)$</from>
+		<from>/component/image/([0-9]+)\.([A-Za-z0-9]+)$</from>
 		<to>/image?component=$1&amp;format=$2&amp;download=1</to>
 	</rule>
 	
 	<!-- Package image. -->
 	<rule>
-		<from>/package/image/([0-9]+).([A-Za-z0-9]+)$</from>
+		<from>/package/image/([0-9]+)\.([A-Za-z0-9]+)$</from>
 		<to>/image?package=$1&amp;format=$2&amp;download=1</to>
 	</rule>
 	
 	<!-- Component datasheet by ID. -->
 	<rule>
-		<from>/datasheet/([0-9]+).pdf$</from>
+		<from>/datasheet/([0-9]+)\.pdf$</from>
 		<to>/datasheet?id=$1&amp;download=1</to>
 	</rule>
 	
 	<!-- Component datasheet. -->
 	<rule>
-		<from>/component/datasheet/([0-9]+).pdf$</from>
+		<from>/component/datasheet/([0-9]+)\.pdf$</from>
 		<to>/datasheet?component=$1&amp;download=1</to>
 	</rule>
 </urlrewrite>
