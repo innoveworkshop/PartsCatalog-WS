@@ -98,6 +98,7 @@ CREATE TABLE [dbo].[BillOfMaterialsItems](
 	[ItemID] [int] IDENTITY(1,1) NOT NULL,
 	[Quantity] [int] NOT NULL,
 	[RefDes] [text] NOT NULL,
+	[Value] [varchar](25) NOT NULL,
 	[Populate] [bit] NOT NULL,
 	[ComponentID] [int] NULL,
 	[ProjectID] [int] NOT NULL,
