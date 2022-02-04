@@ -97,7 +97,7 @@ GO
 CREATE TABLE [dbo].[BillOfMaterialsItems](
 	[ItemID] [int] IDENTITY(1,1) NOT NULL,
 	[Quantity] [int] NOT NULL,
-	[RefDes] [text] NOT NULL,
+	[RefDes] [varchar](max) NOT NULL,
 	[Value] [varchar](25) NOT NULL,
 	[Populate] [bit] NOT NULL,
 	[ComponentID] [int] NULL,
@@ -131,7 +131,7 @@ CREATE TABLE [dbo].[Components](
 	[ComponentID] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [nvarchar](100) NOT NULL,
 	[Quantity] [bigint] NOT NULL,
-	[Description] [text] NULL,
+	[Description] [varchar](max) NULL,
 	[CategoryID] [int] NOT NULL,
 	[SubCategoryID] [int] NOT NULL,
 	[PackageID] [int] NOT NULL,
@@ -206,7 +206,7 @@ CREATE TABLE [dbo].[Projects](
 	[ProjectID] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [nvarchar](70) NOT NULL,
 	[Revision] [nvarchar](15) NULL,
-	[Description] [text] NULL,
+	[Description] [varchar](max) NULL,
  CONSTRAINT [Projects$ID] PRIMARY KEY CLUSTERED 
 (
 	[ProjectID] ASC
