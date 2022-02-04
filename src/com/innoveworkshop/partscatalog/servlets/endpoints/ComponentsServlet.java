@@ -50,27 +50,50 @@ public class ComponentsServlet extends DatabaseHttpServlet {
 		Query query;
 		if (request.getParameter("id") != null) {
 			// Get a single component.
-			query = session.createQuery("FROM Component WHERE id = :id");
+			query = session.createQuery("SELECT DISTINCT comp FROM Component comp " +
+				"LEFT JOIN FETCH comp.category LEFT JOIN FETCH comp.subCategory " +
+				"LEFT JOIN FETCH comp.caseStyle LEFT JOIN FETCH comp.properties " +
+				"LEFT JOIN FETCH comp.image LEFT JOIN FETCH comp.datasheet " +
+				"WHERE comp.id = :id");
 			query.setParameter("id", Integer.parseInt(request.getParameter("id")));
 		} else if (request.getParameter("name") != null) {
 			// Get a single component from a name.
-			query = session.createQuery("FROM Component WHERE name = :name");
+			query = session.createQuery("SELECT DISTINCT comp FROM Component comp " +
+				"LEFT JOIN FETCH comp.category LEFT JOIN FETCH comp.subCategory " +
+				"LEFT JOIN FETCH comp.caseStyle LEFT JOIN FETCH comp.properties " +
+				"LEFT JOIN FETCH comp.image LEFT JOIN FETCH comp.datasheet " +
+				"WHERE comp.name = :name");
 			query.setParameter("name", request.getParameter("name"));
 		} else if (request.getParameter("category") != null) {
 			// List components from a category.
-			query = session.createQuery("FROM Component WHERE category.id = :category");
+			query = session.createQuery("SELECT DISTINCT comp FROM Component comp " +
+				"LEFT JOIN FETCH comp.category LEFT JOIN FETCH comp.subCategory " +
+				"LEFT JOIN FETCH comp.caseStyle LEFT JOIN FETCH comp.properties " +
+				"LEFT JOIN FETCH comp.image LEFT JOIN FETCH comp.datasheet " +
+				"WHERE comp.category.id = :category");
 			query.setParameter("category", Integer.parseInt(request.getParameter("category")));
 		} else if (request.getParameter("subcategory") != null) {
 			// List components from a sub-category.
-			query = session.createQuery("FROM Component WHERE subCategory.id = :subcategory");
+			query = session.createQuery("SELECT DISTINCT comp FROM Component comp " +
+				"LEFT JOIN FETCH comp.category LEFT JOIN FETCH comp.subCategory " +
+				"LEFT JOIN FETCH comp.caseStyle LEFT JOIN FETCH comp.properties " +
+				"LEFT JOIN FETCH comp.image LEFT JOIN FETCH comp.datasheet " +
+				"WHERE comp.subCategory.id = :subcategory");
 			query.setParameter("subcategory", Integer.parseInt(request.getParameter("subcategory")));
 		} else if (request.getParameter("package") != null) {
 			// List components from a package.
-			query = session.createQuery("FROM Component WHERE caseStyle.id = :package");
+			query = session.createQuery("SELECT DISTINCT comp FROM Component comp " +
+				"LEFT JOIN FETCH comp.category LEFT JOIN FETCH comp.subCategory " +
+				"LEFT JOIN FETCH comp.caseStyle LEFT JOIN FETCH comp.properties " +
+				"LEFT JOIN FETCH comp.image LEFT JOIN FETCH comp.datasheet " +
+				"WHERE comp.caseStyle.id = :package");
 			query.setParameter("package", Integer.parseInt(request.getParameter("package")));
 		} else {
 			// List all components.
-			query = session.createQuery("FROM Component");
+			query = session.createQuery("SELECT DISTINCT comp FROM Component comp " +
+				"LEFT JOIN FETCH comp.category LEFT JOIN FETCH comp.subCategory " +
+				"LEFT JOIN FETCH comp.caseStyle LEFT JOIN FETCH comp.properties " +
+				"LEFT JOIN FETCH comp.image LEFT JOIN FETCH comp.datasheet");
 		}
 		@SuppressWarnings("unchecked")
 		List<Component> components = (List<Component>)query.getResultList();

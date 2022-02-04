@@ -41,10 +41,12 @@ public class CaseStyleServlet extends DatabaseHttpServlet {
 		Query query;
 		if (request.getParameter("id") == null) {
 			// List all packages.
-			query = session.createQuery("FROM CaseStyle");
+			query = session.createQuery("SELECT DISTINCT pkg FROM CaseStyle pkg " +
+				"LEFT JOIN FETCH pkg.image");
 		} else {
 			// Get a single package.
-			query = session.createQuery("FROM CaseStyle WHERE id = :id");
+			query = session.createQuery("SELECT DISTINCT pkg FROM CaseStyle pkg " +
+				"LEFT JOIN FETCH pkg.image WHERE pkg.id = :id");
 			query.setParameter("id", Integer.parseInt(request.getParameter("id")));
 		}
 		@SuppressWarnings("unchecked")

@@ -47,14 +47,16 @@ public class DatasheetsServlet extends DatabaseHttpServlet {
 		Query query;
 		if (request.getParameter("id") != null) {
 			// Get datasheet via its ID.
-			query = session.createQuery("FROM Datasheet WHERE id = :id");
+			query = session.createQuery("SELECT DISTINCT dtsht FROM Datasheet dtsht " +
+				"LEFT JOIN FETCH dtsht.component WHERE dtsht.id = :id");
 			query.setParameter("id", Integer.parseInt(request.getParameter("id")));
 		} else {
 			// Get a component datasheet.
 			if (!paramChecker.require("component"))
 				return;
-			
-			query = session.createQuery("FROM Datasheet WHERE component.id = :component");
+
+			query = session.createQuery("SELECT DISTINCT dtsht FROM Datasheet dtsht " +
+				"LEFT JOIN FETCH dtsht.component WHERE dtsht.component.id = :component");
 			query.setParameter("component", Integer.parseInt(request.getParameter("component")));
 		}
 		@SuppressWarnings("unchecked")

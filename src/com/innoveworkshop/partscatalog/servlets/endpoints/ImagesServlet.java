@@ -50,7 +50,9 @@ public class ImagesServlet extends DatabaseHttpServlet {
 		Query query;
 		if (request.getParameter("id") != null) {
 			// Get image via its ID.
-			query = session.createQuery("FROM Image WHERE id = :id");
+			query = session.createQuery("SELECT DISTINCT img FROM Image img " +
+				"LEFT JOIN FETCH img.component LEFT JOIN FETCH img.caseStyle " +
+				"WHERE img.id = :id");
 			query.setParameter("id", Integer.parseInt(request.getParameter("id")));
 		} else {
 			// Get a component or package image.
@@ -59,11 +61,13 @@ public class ImagesServlet extends DatabaseHttpServlet {
 			
 			if (request.getParameter("component") != null) {
 				// Component image.
-				query = session.createQuery("FROM Image WHERE component.id = :component");
+				query = session.createQuery("SELECT DISTINCT img FROM Image img " +
+					"LEFT JOIN FETCH img.component WHERE img.component.id = :component");
 				query.setParameter("component", Integer.parseInt(request.getParameter("component")));
 			} else {
 				// Package image.
-				query = session.createQuery("FROM Image WHERE caseStyle.id = :package");
+				query = session.createQuery("SELECT DISTINCT img FROM Image img " +
+					"LEFT JOIN FETCH img.caseStyle WHERE img.caseStyle.id = :package");
 				query.setParameter("package", Integer.parseInt(request.getParameter("package")));
 			}
 		}

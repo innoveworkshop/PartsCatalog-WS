@@ -50,13 +50,15 @@ public class SubCategoriesServlet extends DatabaseHttpServlet {
 		Query query;
 		if (request.getParameter("category") != null) {
 			// Get sub-categories from a category.
-			query = session.createQuery("FROM SubCategory WHERE parentCategory.id = :parent");
+			query = session.createQuery("SELECT DISTINCT subcat FROM SubCategory subcat " +
+				"LEFT JOIN FETCH subcat.parentCategory WHERE subcat.parentCategory.id = :parent");
 			query.setParameter("parent", Integer.parseInt(request.getParameter("category")));
 			
 			formatter.setVerbose(false);
 		} else {
 			// Get a single sub-category.
-			query = session.createQuery("FROM SubCategory WHERE id = :id");
+			query = session.createQuery("SELECT DISTINCT subcat FROM SubCategory subcat " +
+				"LEFT JOIN FETCH subcat.parentCategory WHERE subcat.id = :id");
 			query.setParameter("id", Integer.parseInt(request.getParameter("id")));
 			
 			formatter.setVerbose(true);

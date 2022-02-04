@@ -51,13 +51,17 @@ public class BOMItemsServlet extends DatabaseHttpServlet {
 		Query query;
 		if (request.getParameter("project") != null) {
 			// Get items from a project.
-			query = session.createQuery("FROM BOMItem WHERE parentProject.id = :parent");
+			query = session.createQuery("SELECT DISTINCT bitm FROM BOMItem bitm " +
+				"LEFT JOIN FETCH bitm.component LEFT JOIN FETCH bitm.parentProject " +
+				"WHERE bitm.parentProject.id = :parent");
 			query.setParameter("parent", Integer.parseInt(request.getParameter("project")));
 			
 			formatter.setVerbose(false);
 		} else {
 			// Get a single BOM item.
-			query = session.createQuery("FROM BOMItem WHERE id = :id");
+			query = session.createQuery("SELECT DISTINCT bitm FROM BOMItem bitm " +
+					"LEFT JOIN FETCH bitm.component LEFT JOIN FETCH bitm.parentProject " +
+					"WHERE bitm.id = :id");
 			query.setParameter("id", Integer.parseInt(request.getParameter("id")));
 			
 			formatter.setVerbose(true);
