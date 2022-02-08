@@ -46,7 +46,7 @@ public class CategoriesServlet extends DatabaseHttpServlet {
 		} else {
 			// Get a single category.
 			query = session.createQuery("SELECT DISTINCT cat FROM Category cat " +
-				"LEFT JOIN FETCH cat.subCategories WHERE car.id = :id");
+				"LEFT JOIN FETCH cat.subCategories WHERE cat.id = :id");
 			query.setParameter("id", Integer.parseInt(request.getParameter("id")));
 		}
 		@SuppressWarnings("unchecked")
