@@ -97,8 +97,8 @@ GO
 CREATE TABLE [dbo].[BillOfMaterialsItems](
 	[ItemID] [int] IDENTITY(1,1) NOT NULL,
 	[Quantity] [int] NOT NULL,
-	[RefDes] [varchar](max) NOT NULL,
-	[Value] [varchar](25) NOT NULL,
+	[RefDes] [nvarchar](max) NOT NULL,
+	[Value] [nvarchar](25) NOT NULL,
 	[Populate] [bit] NOT NULL,
 	[ComponentID] [int] NULL,
 	[ProjectID] [int] NOT NULL,
@@ -131,7 +131,7 @@ CREATE TABLE [dbo].[Components](
 	[ComponentID] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [nvarchar](100) NOT NULL,
 	[Quantity] [bigint] NOT NULL,
-	[Description] [varchar](max) NULL,
+	[Description] [nvarchar](max) NULL,
 	[CategoryID] [int] NOT NULL,
 	[SubCategoryID] [int] NOT NULL,
 	[PackageID] [int] NOT NULL,
@@ -168,7 +168,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Images](
 	[ImageID] [int] IDENTITY(1,1) NOT NULL,
-	[Format] [varchar](10) NOT NULL,
+	[Format] [nvarchar](10) NOT NULL,
 	[rowguid] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
 	[FileContent] [varbinary](max) FILESTREAM  NOT NULL,
 	[ComponentID] [int] NULL,
@@ -206,7 +206,7 @@ CREATE TABLE [dbo].[Projects](
 	[ProjectID] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [nvarchar](70) NOT NULL,
 	[Revision] [nvarchar](15) NULL,
-	[Description] [varchar](max) NULL,
+	[Description] [nvarchar](max) NULL,
  CONSTRAINT [Projects$ID] PRIMARY KEY CLUSTERED 
 (
 	[ProjectID] ASC
