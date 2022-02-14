@@ -53,7 +53,7 @@ public class BOMItemsServlet extends DatabaseHttpServlet {
 			// Get items from a project.
 			query = session.createQuery("SELECT DISTINCT bitm FROM BOMItem bitm " +
 				"LEFT JOIN FETCH bitm.component LEFT JOIN FETCH bitm.parentProject " +
-				"WHERE bitm.parentProject.id = :parent");
+				"WHERE bitm.parentProject.id = :parent ORDER BY bitm.refDes");
 			query.setParameter("parent", Integer.parseInt(request.getParameter("project")));
 			
 			formatter.setVerbose(false);

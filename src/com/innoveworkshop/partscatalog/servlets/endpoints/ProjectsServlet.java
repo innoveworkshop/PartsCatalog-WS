@@ -42,7 +42,7 @@ public class ProjectsServlet extends DatabaseHttpServlet {
 		if (request.getParameter("id") == null) {
 			// List all projects.
 			query = session.createQuery("SELECT DISTINCT prj FROM Project prj " +
-				"LEFT JOIN FETCH prj.bomItems");
+				"LEFT JOIN FETCH prj.bomItems ORDER BY prj.name, prj.revision");
 		} else {
 			// Get a single project.
 			query = session.createQuery("SELECT DISTINCT prj FROM Project prj " +

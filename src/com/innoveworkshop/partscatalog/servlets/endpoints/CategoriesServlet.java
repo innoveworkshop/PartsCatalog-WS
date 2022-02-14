@@ -42,7 +42,7 @@ public class CategoriesServlet extends DatabaseHttpServlet {
 		if (request.getParameter("id") == null) {
 			// List all categories.
 			query = session.createQuery("SELECT DISTINCT cat FROM Category cat " +
-				"LEFT JOIN FETCH cat.subCategories");
+				"LEFT JOIN FETCH cat.subCategories ORDER BY cat.name");
 		} else {
 			// Get a single category.
 			query = session.createQuery("SELECT DISTINCT cat FROM Category cat " +

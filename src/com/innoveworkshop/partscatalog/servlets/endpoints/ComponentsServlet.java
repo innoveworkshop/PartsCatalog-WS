@@ -70,7 +70,7 @@ public class ComponentsServlet extends DatabaseHttpServlet {
 				"LEFT JOIN FETCH comp.category LEFT JOIN FETCH comp.subCategory " +
 				"LEFT JOIN FETCH comp.caseStyle LEFT JOIN FETCH comp.properties " +
 				"LEFT JOIN FETCH comp.image LEFT JOIN FETCH comp.datasheet " +
-				"WHERE comp.category.id = :category");
+				"WHERE comp.category.id = :category ORDER BY comp.name");
 			query.setParameter("category", Integer.parseInt(request.getParameter("category")));
 		} else if (request.getParameter("subcategory") != null) {
 			// List components from a sub-category.
@@ -78,7 +78,7 @@ public class ComponentsServlet extends DatabaseHttpServlet {
 				"LEFT JOIN FETCH comp.category LEFT JOIN FETCH comp.subCategory " +
 				"LEFT JOIN FETCH comp.caseStyle LEFT JOIN FETCH comp.properties " +
 				"LEFT JOIN FETCH comp.image LEFT JOIN FETCH comp.datasheet " +
-				"WHERE comp.subCategory.id = :subcategory");
+				"WHERE comp.subCategory.id = :subcategory ORDER BY comp.name");
 			query.setParameter("subcategory", Integer.parseInt(request.getParameter("subcategory")));
 		} else if (request.getParameter("package") != null) {
 			// List components from a package.
@@ -86,14 +86,15 @@ public class ComponentsServlet extends DatabaseHttpServlet {
 				"LEFT JOIN FETCH comp.category LEFT JOIN FETCH comp.subCategory " +
 				"LEFT JOIN FETCH comp.caseStyle LEFT JOIN FETCH comp.properties " +
 				"LEFT JOIN FETCH comp.image LEFT JOIN FETCH comp.datasheet " +
-				"WHERE comp.caseStyle.id = :package");
+				"WHERE comp.caseStyle.id = :package ORDER BY comp.name");
 			query.setParameter("package", Integer.parseInt(request.getParameter("package")));
 		} else {
 			// List all components.
 			query = session.createQuery("SELECT DISTINCT comp FROM Component comp " +
 				"LEFT JOIN FETCH comp.category LEFT JOIN FETCH comp.subCategory " +
 				"LEFT JOIN FETCH comp.caseStyle LEFT JOIN FETCH comp.properties " +
-				"LEFT JOIN FETCH comp.image LEFT JOIN FETCH comp.datasheet");
+				"LEFT JOIN FETCH comp.image LEFT JOIN FETCH comp.datasheet " +
+				"ORDER BY comp.name");
 		}
 		@SuppressWarnings("unchecked")
 		List<Component> components = (List<Component>)query.getResultList();

@@ -49,7 +49,8 @@ public class PropertiesServlet extends DatabaseHttpServlet {
 		if (request.getParameter("component") != null) {
 			// Get properties from a component.
 			query = session.createQuery("SELECT DISTINCT prop FROM Property prop " +
-				"LEFT JOIN FETCH prop.component WHERE prop.component.id = :component");
+				"LEFT JOIN FETCH prop.component WHERE prop.component.id = :component " +
+				"ORDER BY prop.name");
 			query.setParameter("component", Integer.parseInt(request.getParameter("component")));
 		} else {
 			// Get a single property.

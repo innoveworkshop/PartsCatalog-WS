@@ -42,7 +42,7 @@ public class CaseStyleServlet extends DatabaseHttpServlet {
 		if (request.getParameter("id") == null) {
 			// List all packages.
 			query = session.createQuery("SELECT DISTINCT pkg FROM CaseStyle pkg " +
-				"LEFT JOIN FETCH pkg.image");
+				"LEFT JOIN FETCH pkg.image ORDER BY pkg.name");
 		} else {
 			// Get a single package.
 			query = session.createQuery("SELECT DISTINCT pkg FROM CaseStyle pkg " +
